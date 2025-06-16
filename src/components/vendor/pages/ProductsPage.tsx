@@ -111,7 +111,11 @@ export function ProductsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Products</h1>
           <p className="text-gray-600 mt-1">Manage your product catalog and inventory</p>
         </div>
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <Dialog open={isFormOpen} onOpenChange={(open) => {
+          if (!open) {
+            handleCloseForm();
+          }
+        }}>
           <DialogTrigger asChild>
             <Button onClick={handleOpenAddForm}>
               <Plus className="w-4 h-4 mr-2" />
