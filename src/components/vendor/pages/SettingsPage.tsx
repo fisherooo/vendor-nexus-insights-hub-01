@@ -1,208 +1,273 @@
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings, Bell, User, DollarSign } from 'lucide-react';
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { User, Plus, Trash2, Edit } from "lucide-react";
+
+interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  permissions: string[];
+  lastLogin: string;
+  status: "active" | "inactive";
+  addedBy: string;
+  addedDate: string;
+}
 
 export function SettingsPage() {
-  const [notifications, setNotifications] = useState({
-    orderAlerts: true,
-    inventoryAlerts: true,
-    reviewAlerts: true,
-    emailMarketing: false
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
+    {
+      id: "1",
+      name: "John Doe",
+      email: "john@example.com",
+      role: "Admin",
+      permissions: ["All"],
+      lastLogin: "2024-01-15",
+      status: "active",
+      addedBy: "System",
+      addedDate: "2024-01-01"
+    },
+    {
+      id: "2",
+      name: "Jane Smith",
+      email: "jane@example.com",
+      role: "Manager",
+      permissions: ["Products", "Orders", "Analytics"],
+      lastLogin: "2024-01-14",
+      status: "active",
+      addedBy: "John Doe",
+      addedDate: "2024-01-10"
+    }
+  ]);
+
+  const [isAddingMember, setIsAddingMember] = useState(false);
+  const [newMember, setNewMember] = useState({
+    name: "",
+    email: "",
+    role: "",
+    permissions: [] as string[]
   });
 
-  const [profile, setProfile] = useState({
-    businessName: 'My Business',
-    contactEmail: 'contact@mybusiness.com',
-    phone: '+1-234-567-8900',
-    address: '123 Business St, City, State 12345'
-  });
+  const roles = ["Admin", "Manager", "Editor", "Viewer"];
+  const availablePermissions = [
+    "Products", "Orders", "Analytics", "Inventory", "Settings", "Team Management"
+  ];
+
+  const addTeamMember = () => {
+    const member: TeamMember = {
+      id: Date.now().toString(),
+      ...newMember,
+      lastLogin: "Never",
+      status: "active",
+      addedBy: "John Doe",
+      addedDate: new Date().toISOString().split('T')[0]
+    };
+    setTeamMembers([...teamMembers, member]);
+    setNewMember({ name: "", email: "", role: "", permissions: [] });
+    setIsAddingMember(false);
+  };
+
+  const removeMember = (id: string) => {
+    setTeamMembers(teamMembers.filter(member => member.id !== id));
+  };
+
+  const togglePermission = (permission: string) => {
+    setNewMember(prev => ({
+      ...prev,
+      permissions: prev.permissions.includes(permission)
+        ? prev.permissions.filter(p => p !== permission)
+        : [...prev.permissions, permission]
+    }));
+  };
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Settings</h1>
-      
-      <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="profile" className="flex items-center space-x-2">
-            <User className="w-4 h-4" />
-            <span>Profile</span>
-          </TabsTrigger>
-          <TabsTrigger value="notifications" className="flex items-center space-x-2">
-            <Bell className="w-4 h-4" />
-            <span>Notifications</span>
-          </TabsTrigger>
-          <TabsTrigger value="billing" className="flex items-center space-x-2">
-            <DollarSign className="w-4 h-4" />
-            <span>Billing</span>
-          </TabsTrigger>
-          <TabsTrigger value="advanced" className="flex items-center space-x-2">
-            <Settings className="w-4 h-4" />
-            <span>Advanced</span>
-          </TabsTrigger>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+        <p className="text-gray-600 mt-1">Manage your account and team settings</p>
+      </div>
+
+      <Tabs defaultValue="team" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="team">Team Management</TabsTrigger>
+          <TabsTrigger value="account">Account Settings</TabsTrigger>
+          <TabsTrigger value="notifications">Notifications</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="profile">
+        <TabsContent value="team" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Business Profile</CardTitle>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Team Members</CardTitle>
+                  <CardDescription>
+                    Manage your team members and their permissions
+                  </CardDescription>
+                </div>
+                <Dialog open={isAddingMember} onOpenChange={setIsAddingMember}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Member
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Add New Team Member</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="memberName">Name</Label>
+                        <Input
+                          id="memberName"
+                          value={newMember.name}
+                          onChange={(e) => setNewMember(prev => ({ ...prev, name: e.target.value }))}
+                          placeholder="Enter member name"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="memberEmail">Email</Label>
+                        <Input
+                          id="memberEmail"
+                          type="email"
+                          value={newMember.email}
+                          onChange={(e) => setNewMember(prev => ({ ...prev, email: e.target.value }))}
+                          placeholder="Enter email address"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="memberRole">Role</Label>
+                        <Select value={newMember.role} onValueChange={(value) => setNewMember(prev => ({ ...prev, role: value }))}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {roles.map((role) => (
+                              <SelectItem key={role} value={role}>{role}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Permissions</Label>
+                        <div className="grid grid-cols-2 gap-2 mt-2">
+                          {availablePermissions.map((permission) => (
+                            <Button
+                              key={permission}
+                              variant={newMember.permissions.includes(permission) ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => togglePermission(permission)}
+                              className="justify-start"
+                            >
+                              {permission}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex justify-end space-x-2">
+                        <Button variant="outline" onClick={() => setIsAddingMember(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={addTeamMember} disabled={!newMember.name || !newMember.email || !newMember.role}>
+                          Add Member
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {teamMembers.map((member) => (
+                  <div key={member.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                        <User className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium">{member.name}</h3>
+                        <p className="text-sm text-gray-600">{member.email}</p>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <Badge variant="outline">{member.role}</Badge>
+                          <Badge variant={member.status === "active" ? "default" : "secondary"}>
+                            {member.status}
+                          </Badge>
+                        </div>
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {member.permissions.map((permission) => (
+                            <Badge key={permission} variant="secondary" className="text-xs">
+                              {permission}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-600">Last login: {member.lastLogin}</p>
+                      <p className="text-xs text-gray-500">Added by {member.addedBy} on {member.addedDate}</p>
+                      <div className="flex space-x-2 mt-2">
+                        <Button variant="outline" size="sm">
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => removeMember(member.id)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="account" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Account Information</CardTitle>
+              <CardDescription>Update your account details</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="businessName">Business Name</Label>
-                <Input
-                  id="businessName"
-                  value={profile.businessName}
-                  onChange={(e) => setProfile({ ...profile, businessName: e.target.value })}
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input id="firstName" defaultValue="John" />
+                </div>
+                <div>
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input id="lastName" defaultValue="Doe" />
+                </div>
               </div>
               <div>
-                <Label htmlFor="contactEmail">Contact Email</Label>
-                <Input
-                  id="contactEmail"
-                  type="email"
-                  value={profile.contactEmail}
-                  onChange={(e) => setProfile({ ...profile, contactEmail: e.target.value })}
-                />
+                <Label htmlFor="email">Email Address</Label>
+                <Input id="email" type="email" defaultValue="john@example.com" />
               </div>
               <div>
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  value={profile.phone}
-                  onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                />
+                <Input id="phone" defaultValue="+1 (555) 123-4567" />
               </div>
-              <div>
-                <Label htmlFor="address">Business Address</Label>
-                <Input
-                  id="address"
-                  value={profile.address}
-                  onChange={(e) => setProfile({ ...profile, address: e.target.value })}
-                />
-              </div>
-              <Button style={{ backgroundColor: '#00B14F' }} className="text-white">
-                Save Profile
-              </Button>
+              <Button>Save Changes</Button>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="notifications">
+        <TabsContent value="notifications" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Notification Preferences</CardTitle>
+              <CardTitle>Notification Settings</CardTitle>
+              <CardDescription>Configure how you receive notifications</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium">Order Alerts</h3>
-                  <p className="text-sm text-gray-600">Get notified when you receive new orders</p>
-                </div>
-                <Switch
-                  checked={notifications.orderAlerts}
-                  onCheckedChange={(checked) => setNotifications({ ...notifications, orderAlerts: checked })}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium">Inventory Alerts</h3>
-                  <p className="text-sm text-gray-600">Get notified when stock is running low</p>
-                </div>
-                <Switch
-                  checked={notifications.inventoryAlerts}
-                  onCheckedChange={(checked) => setNotifications({ ...notifications, inventoryAlerts: checked })}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium">Review Alerts</h3>
-                  <p className="text-sm text-gray-600">Get notified when you receive new reviews</p>
-                </div>
-                <Switch
-                  checked={notifications.reviewAlerts}
-                  onCheckedChange={(checked) => setNotifications({ ...notifications, reviewAlerts: checked })}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium">Marketing Emails</h3>
-                  <p className="text-sm text-gray-600">Receive marketing tips and updates</p>
-                </div>
-                <Switch
-                  checked={notifications.emailMarketing}
-                  onCheckedChange={(checked) => setNotifications({ ...notifications, emailMarketing: checked })}
-                />
-              </div>
-              <Button style={{ backgroundColor: '#00B14F' }} className="text-white">
-                Save Preferences
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="billing">
-          <Card>
-            <CardHeader>
-              <CardTitle>Billing Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="p-4 border rounded-lg">
-                <h3 className="font-medium">Current Plan: Professional</h3>
-                <p className="text-sm text-gray-600">$29.99/month</p>
-                <p className="text-sm text-gray-600">Next billing: February 15, 2024</p>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <Label>Payment Method</Label>
-                  <div className="p-3 border rounded-lg flex justify-between items-center">
-                    <span>**** **** **** 1234</span>
-                    <Button variant="outline" size="sm">Update</Button>
-                  </div>
-                </div>
-              </div>
-              <Button style={{ backgroundColor: '#00B14F' }} className="text-white">
-                Manage Billing
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="advanced">
-          <Card>
-            <CardHeader>
-              <CardTitle>Advanced Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <Label>API Access</Label>
-                <div className="p-3 border rounded-lg">
-                  <p className="text-sm text-gray-600 mb-2">API Key (click to reveal)</p>
-                  <div className="flex space-x-2">
-                    <Input value="sk_live_••••••••••••••••" readOnly />
-                    <Button variant="outline" size="sm">Regenerate</Button>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <Label>Data Export</Label>
-                <div className="space-y-2">
-                  <Button variant="outline" className="w-full">Export Product Data</Button>
-                  <Button variant="outline" className="w-full">Export Order History</Button>
-                  <Button variant="outline" className="w-full">Export Customer Data</Button>
-                </div>
-              </div>
-              <div className="border-t pt-4">
-                <h3 className="font-medium text-red-600 mb-2">Danger Zone</h3>
-                <Button variant="destructive" className="w-full">
-                  Delete Account
-                </Button>
-              </div>
+            <CardContent>
+              <p className="text-gray-600">Notification settings will be available soon.</p>
             </CardContent>
           </Card>
         </TabsContent>

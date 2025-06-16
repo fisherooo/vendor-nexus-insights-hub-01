@@ -1,184 +1,247 @@
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Package, ArrowUp, ArrowDown } from 'lucide-react';
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { AlertTriangle, Package, TrendingDown, TrendingUp, Plus, Minus } from "lucide-react";
 
 interface InventoryItem {
   id: string;
   name: string;
+  sku: string;
   currentStock: number;
   minStock: number;
   maxStock: number;
-  lastUpdated: string;
-  status: 'in_stock' | 'low_stock' | 'out_of_stock';
+  reorderPoint: number;
+  category: string;
+  lastRestocked: string;
+  status: "in_stock" | "low_stock" | "out_of_stock" | "overstocked";
 }
 
 export function InventoryPage() {
   const [inventory, setInventory] = useState<InventoryItem[]>([
     {
-      id: '1',
-      name: 'Sample Product',
-      currentStock: 150,
-      minStock: 50,
-      maxStock: 500,
-      lastUpdated: '2024-01-15',
-      status: 'in_stock'
+      id: "1",
+      name: "Wireless Headphones",
+      sku: "WH-001",
+      currentStock: 45,
+      minStock: 10,
+      maxStock: 100,
+      reorderPoint: 15,
+      category: "Electronics",
+      lastRestocked: "2024-01-15",
+      status: "in_stock"
     },
     {
-      id: '2',
-      name: 'Low Stock Item',
-      currentStock: 25,
-      minStock: 50,
-      maxStock: 300,
-      lastUpdated: '2024-01-14',
-      status: 'low_stock'
+      id: "2",
+      name: "Smart Watch",
+      sku: "SW-002",
+      currentStock: 5,
+      minStock: 10,
+      maxStock: 50,
+      reorderPoint: 15,
+      category: "Electronics",
+      lastRestocked: "2024-01-10",
+      status: "low_stock"
+    },
+    {
+      id: "3",
+      name: "Bluetooth Speaker",
+      sku: "BS-003",
+      currentStock: 0,
+      minStock: 5,
+      maxStock: 25,
+      reorderPoint: 8,
+      category: "Electronics",
+      lastRestocked: "2024-01-05",
+      status: "out_of_stock"
     }
   ]);
 
-  const [stockUpdates, setStockUpdates] = useState<Record<string, string>>({});
+  const updateStock = (id: string, change: number) => {
+    setInventory(prev => prev.map(item => {
+      if (item.id === id) {
+        const newStock = Math.max(0, item.currentStock + change);
+        let status: InventoryItem["status"] = "in_stock";
+        
+        if (newStock === 0) status = "out_of_stock";
+        else if (newStock <= item.minStock) status = "low_stock";
+        else if (newStock >= item.maxStock) status = "overstocked";
+        
+        return { ...item, currentStock: newStock, status };
+      }
+      return item;
+    }));
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'in_stock': return '#00B14F';
-      case 'low_stock': return '#FFA500';
-      case 'out_of_stock': return '#FF0000';
-      default: return '#6B7280';
+      case "in_stock": return "bg-green-100 text-green-800";
+      case "low_stock": return "bg-yellow-100 text-yellow-800";
+      case "out_of_stock": return "bg-red-100 text-red-800";
+      case "overstocked": return "bg-blue-100 text-blue-800";
+      default: return "bg-gray-100 text-gray-800";
     }
   };
 
-  const updateStock = (id: string, adjustment: number) => {
-    setInventory(prev => prev.map(item => {
-      if (item.id === id) {
-        const newStock = Math.max(0, item.currentStock + adjustment);
-        let newStatus: 'in_stock' | 'low_stock' | 'out_of_stock' = 'in_stock';
-        
-        if (newStock === 0) newStatus = 'out_of_stock';
-        else if (newStock <= item.minStock) newStatus = 'low_stock';
-        
-        return {
-          ...item,
-          currentStock: newStock,
-          status: newStatus,
-          lastUpdated: new Date().toISOString().split('T')[0]
-        };
-      }
-      return item;
-    }));
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "low_stock":
+      case "out_of_stock":
+        return <AlertTriangle className="w-4 h-4" />;
+      case "overstocked":
+        return <TrendingUp className="w-4 h-4" />;
+      default:
+        return <Package className="w-4 h-4" />;
+    }
   };
 
-  const setStock = (id: string, newStock: number) => {
-    setInventory(prev => prev.map(item => {
-      if (item.id === id) {
-        let newStatus: 'in_stock' | 'low_stock' | 'out_of_stock' = 'in_stock';
-        
-        if (newStock === 0) newStatus = 'out_of_stock';
-        else if (newStock <= item.minStock) newStatus = 'low_stock';
-        
-        return {
-          ...item,
-          currentStock: newStock,
-          status: newStatus,
-          lastUpdated: new Date().toISOString().split('T')[0]
-        };
-      }
-      return item;
-    }));
-  };
+  const totalItems = inventory.reduce((sum, item) => sum + item.currentStock, 0);
+  const lowStockItems = inventory.filter(item => item.status === "low_stock" || item.status === "out_of_stock").length;
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Inventory Management</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {inventory.map((item) => (
-          <Card key={item.id}>
-            <CardHeader>
-              <CardTitle className="flex justify-between items-center">
-                <span>{item.name}</span>
-                <Badge 
-                  variant="secondary" 
-                  style={{ backgroundColor: getStatusColor(item.status), color: 'white' }}
-                >
-                  {item.status.replace('_', ' ').toUpperCase()}
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Current Stock:</span>
-                  <span className="font-semibold">{item.currentStock}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Min Stock:</span>
-                  <span>{item.minStock}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Max Stock:</span>
-                  <span>{item.maxStock}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Last Updated:</span>
-                  <span>{item.lastUpdated}</span>
-                </div>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Inventory Management</h1>
+        <p className="text-gray-600 mt-1">Track and manage your product stock levels</p>
+      </div>
+
+      {/* Inventory Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total Items</p>
+                <p className="text-2xl font-bold">{totalItems}</p>
               </div>
-              
-              <div className="space-y-2">
-                <div className="flex space-x-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => updateStock(item.id, -1)}
-                    className="flex-1"
-                  >
-                    <ArrowDown className="w-4 h-4 mr-1" />
-                    -1
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => updateStock(item.id, 1)}
-                    className="flex-1"
-                  >
-                    <ArrowUp className="w-4 h-4 mr-1" />
-                    +1
-                  </Button>
+              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Package className="w-4 h-4 text-blue-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Products</p>
+                <p className="text-2xl font-bold">{inventory.length}</p>
+              </div>
+              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                <Package className="w-4 h-4 text-green-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Low Stock Alerts</p>
+                <p className="text-2xl font-bold">{lowStockItems}</p>
+              </div>
+              <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <AlertTriangle className="w-4 h-4 text-yellow-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Out of Stock</p>
+                <p className="text-2xl font-bold">{inventory.filter(item => item.status === "out_of_stock").length}</p>
+              </div>
+              <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                <TrendingDown className="w-4 h-4 text-red-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Inventory List */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Inventory Items</CardTitle>
+          <CardDescription>Manage stock levels for all your products</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {inventory.map((item) => (
+              <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                    {getStatusIcon(item.status)}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2">
+                      <h3 className="font-medium text-gray-900">{item.name}</h3>
+                      <Badge className={getStatusColor(item.status)}>
+                        {item.status.replace('_', ' ')}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600">
+                      <span>SKU: {item.sku}</span>
+                      <span>Category: {item.category}</span>
+                      <span>Min: {item.minStock}</span>
+                      <span>Max: {item.maxStock}</span>
+                      <span>Reorder at: {item.reorderPoint}</span>
+                    </div>
+                  </div>
                 </div>
                 
-                <div className="flex space-x-2">
-                  <Input
-                    type="number"
-                    placeholder="Set stock"
-                    value={stockUpdates[item.id] || ''}
-                    onChange={(e) => setStockUpdates(prev => ({
-                      ...prev,
-                      [item.id]: e.target.value
-                    }))}
-                    className="flex-1"
-                  />
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      const newStock = parseInt(stockUpdates[item.id] || '0');
-                      if (!isNaN(newStock)) {
-                        setStock(item.id, newStock);
-                        setStockUpdates(prev => ({ ...prev, [item.id]: '' }));
-                      }
-                    }}
-                    style={{ backgroundColor: '#00B14F' }}
-                    className="text-white"
-                  >
-                    Set
-                  </Button>
+                <div className="flex items-center space-x-4">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{item.currentStock}</p>
+                    <p className="text-xs text-gray-500">Current Stock</p>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => updateStock(item.id, -1)}
+                      disabled={item.currentStock === 0}
+                    >
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => updateStock(item.id, 1)}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  
+                  <div className="w-24">
+                    <Input
+                      type="number"
+                      placeholder="Add stock"
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          const value = parseInt((e.target as HTMLInputElement).value);
+                          if (value > 0) {
+                            updateStock(item.id, value);
+                            (e.target as HTMLInputElement).value = "";
+                          }
+                        }
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
