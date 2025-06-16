@@ -61,6 +61,7 @@ export function ProductsPage() {
     };
     setProducts([...products, newProduct]);
     setIsFormOpen(false);
+    setEditingProduct(null);
   };
 
   const handleEditProduct = (product: Product) => {
@@ -68,8 +69,30 @@ export function ProductsPage() {
     setIsFormOpen(true);
   };
 
+  const handleUpdateProduct = (productData: any) => {
+    if (editingProduct) {
+      setProducts(products.map(p => 
+        p.id === editingProduct.id 
+          ? { ...editingProduct, ...productData }
+          : p
+      ));
+    }
+    setIsFormOpen(false);
+    setEditingProduct(null);
+  };
+
   const handleDeleteProduct = (productId: string) => {
     setProducts(products.filter(p => p.id !== productId));
+  };
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+    setEditingProduct(null);
+  };
+
+  const handleOpenAddForm = () => {
+    setEditingProduct(null);
+    setIsFormOpen(true);
   };
 
   const getStatusColor = (status: string) => {
@@ -90,7 +113,7 @@ export function ProductsPage() {
         </div>
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setEditingProduct(null)}>
+            <Button onClick={handleOpenAddForm}>
               <Plus className="w-4 h-4 mr-2" />
               Add Product
             </Button>
@@ -101,8 +124,8 @@ export function ProductsPage() {
             </DialogHeader>
             <ProductForm
               product={editingProduct}
-              onSubmit={handleAddProduct}
-              onCancel={() => setIsFormOpen(false)}
+              onSubmit={editingProduct ? handleUpdateProduct : handleAddProduct}
+              onCancel={handleCloseForm}
             />
           </DialogContent>
         </Dialog>
