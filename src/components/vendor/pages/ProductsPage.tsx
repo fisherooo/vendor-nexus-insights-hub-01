@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, Eye, Star, Package, AlertTriangle } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, Star } from "lucide-react";
 import { ProductForm } from "@/components/vendor/forms/ProductForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -61,7 +61,6 @@ export function ProductsPage() {
     };
     setProducts([...products, newProduct]);
     setIsFormOpen(false);
-    setEditingProduct(null);
   };
 
   const handleEditProduct = (product: Product) => {
@@ -69,30 +68,8 @@ export function ProductsPage() {
     setIsFormOpen(true);
   };
 
-  const handleUpdateProduct = (productData: any) => {
-    if (editingProduct) {
-      setProducts(products.map(p => 
-        p.id === editingProduct.id 
-          ? { ...editingProduct, ...productData }
-          : p
-      ));
-    }
-    setIsFormOpen(false);
-    setEditingProduct(null);
-  };
-
   const handleDeleteProduct = (productId: string) => {
     setProducts(products.filter(p => p.id !== productId));
-  };
-
-  const handleCloseForm = () => {
-    setIsFormOpen(false);
-    setEditingProduct(null);
-  };
-
-  const handleOpenAddForm = () => {
-    setEditingProduct(null);
-    setIsFormOpen(true);
   };
 
   const getStatusColor = (status: string) => {
@@ -111,13 +88,9 @@ export function ProductsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Products</h1>
           <p className="text-gray-600 mt-1">Manage your product catalog and inventory</p>
         </div>
-        <Dialog open={isFormOpen} onOpenChange={(open) => {
-          if (!open) {
-            handleCloseForm();
-          }
-        }}>
+        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogTrigger asChild>
-            <Button onClick={handleOpenAddForm}>
+            <Button onClick={() => setEditingProduct(null)}>
               <Plus className="w-4 h-4 mr-2" />
               Add Product
             </Button>
@@ -128,8 +101,8 @@ export function ProductsPage() {
             </DialogHeader>
             <ProductForm
               product={editingProduct}
-              onSubmit={editingProduct ? handleUpdateProduct : handleAddProduct}
-              onCancel={handleCloseForm}
+              onSubmit={handleAddProduct}
+              onCancel={() => setIsFormOpen(false)}
             />
           </DialogContent>
         </Dialog>

@@ -185,6 +185,58 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Dashboard Preview */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Powerful Vendor Dashboard
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Get a complete overview of your business with our intuitive dashboard
+            </p>
+          </div>
+
+          <Card className="max-w-4xl mx-auto border-0 shadow-2xl">
+            <CardContent className="p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CreditCard className="w-8 h-8 text-green-600" />
+                  </div>
+                  <h3 className="font-semibold text-2xl text-gray-900">$24,890</h3>
+                  <p className="text-gray-600">Total Revenue</p>
+                </div>
+                
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Package className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <h3 className="font-semibold text-2xl text-gray-900">340</h3>
+                  <p className="text-gray-600">Total Orders</p>
+                </div>
+
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Users className="w-8 h-8 text-purple-600" />
+                  </div>
+                  <h3 className="font-semibold text-2xl text-gray-900">1,245</h3>
+                  <p className="text-gray-600">Customers</p>
+                </div>
+
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle className="w-8 h-8 text-yellow-600" />
+                  </div>
+                  <h3 className="font-semibold text-2xl text-gray-900">4.6</h3>
+                  <p className="text-gray-600">Avg. Rating</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-primary">
         <div className="container mx-auto px-4 text-center">
