@@ -8,6 +8,8 @@ import { AnalyticsPage } from "@/components/vendor/pages/AnalyticsPage";
 import { InventoryPage } from "@/components/vendor/pages/InventoryPage";
 import { SettingsPage } from "@/components/vendor/pages/SettingsPage";
 import { ShopManagementPage } from "@/components/vendor/pages/ShopManagementPage";
+import { NotificationsPage } from "@/components/vendor/pages/NotificationsPage";
+import { ProfilePage } from "@/components/vendor/pages/ProfilePage";
 
 interface VendorDashboardProps {
   onBack: () => void;
@@ -26,6 +28,10 @@ const VendorDashboard = ({ onBack }: VendorDashboardProps) => {
         return <InventoryPage />;
       case "shop":
         return <ShopManagementPage />;
+      case "notifications":
+        return <NotificationsPage />;
+      case "profile":
+        return <ProfilePage />;
       case "settings":
         return <SettingsPage />;
       default:
@@ -39,7 +45,7 @@ const VendorDashboard = ({ onBack }: VendorDashboardProps) => {
         <div className="flex min-h-screen w-full">
           <VendorSidebar currentPage={currentPage} onPageChange={setCurrentPage} />
           <div className="flex-1 flex flex-col">
-            <VendorHeader onBack={onBack} />
+            <VendorHeader onBack={onBack} onProfileClick={() => setCurrentPage("profile")} />
             <main className="flex-1 p-6">
               {renderCurrentPage()}
             </main>
