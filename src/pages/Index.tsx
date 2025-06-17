@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,9 +16,11 @@ import {
 } from "lucide-react";
 import VendorOnboarding from "@/components/VendorOnboarding";
 import VendorDashboard from "@/components/VendorDashboard";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<"home" | "onboarding" | "dashboard">("home");
+  const navigate = useNavigate();
 
   if (currentView === "onboarding") {
     return <VendorOnboarding onBack={() => setCurrentView("home")} />;
