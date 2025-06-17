@@ -1,6 +1,6 @@
 
 import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-import { Package, BarChart3, Warehouse, Settings, Store, Bell, User } from "lucide-react";
+import { Package, BarChart3, Warehouse, Settings, Store, Bell } from "lucide-react";
 
 interface VendorSidebarProps {
   currentPage: string;
@@ -14,7 +14,6 @@ export function VendorSidebar({ currentPage, onPageChange }: VendorSidebarProps)
     { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "shop", label: "Shop Settings", icon: Store },
     { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "profile", label: "Profile & Team", icon: User },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
