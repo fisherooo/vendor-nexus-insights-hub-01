@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,17 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Upload, X, Plus } from "lucide-react";
-import { toast } from "@/components/ui/sonner";
-
-interface ProductVariant {
-  id: string;
-  color: string;
-  colorCode: string;
-  size?: string;
-  stock: number;
-  price?: number;
-}
+import { X, Plus } from "lucide-react";
 
 interface ProductFormProps {
   product?: any;
@@ -26,125 +17,127 @@ interface ProductFormProps {
 
 export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    category: "",
-    stock: "",
-    images: [] as string[],
-    tags: "",
-    weight: "",
-    dimensions: "",
-    brand: "",
-    sku: ""
+    name: product?.name || "",
+    description: product?.description || "",
+    price: product?.price || "",
+    category: product?.category || "",
+    stock: product?.stock || "",
+    images: product?.images || [],
+    colors: product?.colors || [],
+    sizes: product?.sizes || [],
+    weight: product?.weight || "",
+    dimensions: product?.dimensions || "",
+    sku: product?.sku || "",
+    brand: product?.brand || "",
+    tags: product?.tags || []
   });
 
-  const [variants, setVariants] = useState<ProductVariant[]>([]);
-  const [newVariant, setNewVariant] = useState({
-    color: "",
-    colorCode: "#000000",
-    size: "",
-    stock: "",
-    price: ""
-  });
+  const [newColor, setNewColor] = useState("");
+  const [newSize, setNewSize] = useState("");
+  const [newTag, setNewTag] = useState("");
 
-  useEffect(() => {
-    if (product) {
-      setFormData({
-        name: product.name || "",
-        description: product.description || "",
-        price: product.price?.toString() || "",
-        category: product.category || "",
-        stock: product.stock?.toString() || "",
-        images: product.images || [],
-        tags: product.tags || "",
-        weight: product.weight || "",
-        dimensions: product.dimensions || "",
-        brand: product.brand || "",
-        sku: product.sku || ""
-      });
-      setVariants(product.variants || []);
+  const categories = [
+    "Electronics", "Clothing", "Home & Garden", "Sports", "Books", 
+    "Health & Beauty", "Toys", "Automotive", "Food & Beverages", "Other"
+  ];
+
+  const commonColors = [
+    { name: "Black", code: "#000000" },
+    { name: "White", code: "#FFFFFF" },
+    { name: "Red", code: "#FF0000" },
+    { name: "Blue", code: "#0000FF" },
+    { name: "Green", code: "#008000" },
+    { name: "Yellow", code: "#FFFF00" },
+    { name: "Purple", code: "#800080" },
+    { name: "Orange", code: "#FFA500" },
+    { name: "Pink", code: "#FFC0CB" },
+    { name: "Gray", code: "#808080" }
+  ];
+
+  const commonSizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+
+  const addColor = (color: string) => {
+    if (color && !formData.colors.includes(color)) {
+      setFormData(prev => ({
+        ...prev,
+        colors: [...prev.colors, color]
+      }));
+      setNewColor("");
     }
-  }, [product]);
+  };
+
+  const removeColor = (color: string) => {
+    setFormData(prev => ({
+      ...prev,
+      colors: prev.colors.filter(c => c !== color)
+    }));
+  };
+
+  const addSize = (size: string) => {
+    if (size && !formData.sizes.includes(size)) {
+      setFormData(prev => ({
+        ...prev,
+        sizes: [...prev.sizes, size]
+      }));
+      setNewSize("");
+    }
+  };
+
+  const removeSize = (size: string) => {
+    setFormData(prev => ({
+      ...prev,
+      sizes: prev.sizes.filter(s => s !== size)
+    }));
+  };
+
+  const addTag = (tag: string) => {
+    if (tag && !formData.tags.includes(tag)) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...prev.tags, tag]
+      }));
+      setNewTag("");
+    }
+  };
+
+  const removeTag = (tag: string) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(t => t !== tag)
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const productData = {
-      ...formData,
-      price: parseFloat(formData.price),
-      stock: parseInt(formData.stock),
-      variants: variants
-    };
-    onSubmit(productData);
-    toast("Product saved successfully!");
+    onSubmit(formData);
   };
-
-  const handleImageUpload = () => {
-    const newImage = `product_image_${Date.now()}.jpg`;
-    setFormData(prev => ({
-      ...prev,
-      images: [...prev.images, newImage]
-    }));
-    toast("Image uploaded successfully!");
-  };
-
-  const removeImage = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index)
-    }));
-  };
-
-  const addVariant = () => {
-    if (!newVariant.color || !newVariant.stock) {
-      toast("Please fill in color and stock for the variant");
-      return;
-    }
-
-    const variant: ProductVariant = {
-      id: Date.now().toString(),
-      color: newVariant.color,
-      colorCode: newVariant.colorCode,
-      size: newVariant.size,
-      stock: parseInt(newVariant.stock),
-      price: newVariant.price ? parseFloat(newVariant.price) : undefined
-    };
-
-    setVariants([...variants, variant]);
-    setNewVariant({
-      color: "",
-      colorCode: "#000000",
-      size: "",
-      stock: "",
-      price: ""
-    });
-    toast("Variant added successfully!");
-  };
-
-  const removeVariant = (id: string) => {
-    setVariants(variants.filter(v => v.id !== id));
-    toast("Variant removed");
-  };
-
-  const categories = [
-    "Electronics", "Clothing", "Home & Garden", "Sports", "Books", "Toys", "Beauty", "Automotive", "Furniture", "Kitchen"
-  ];
-
-  const sizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="name">Product Name *</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              placeholder="Enter product name"
-              required
-            />
+      {/* Basic Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Basic Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="name">Product Name *</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="brand">Brand</Label>
+              <Input
+                id="brand"
+                value={formData.brand}
+                onChange={(e) => setFormData(prev => ({ ...prev, brand: e.target.value }))}
+              />
+            </div>
           </div>
 
           <div>
@@ -153,46 +146,31 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
               id="description"
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Describe your product..."
               rows={4}
               required
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="price">Base Price ($) *</Label>
+              <Label htmlFor="price">Price *</Label>
               <Input
                 id="price"
                 type="number"
                 step="0.01"
                 value={formData.price}
                 onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
-                placeholder="0.00"
                 required
               />
             </div>
             <div>
-              <Label htmlFor="stock">Base Stock *</Label>
+              <Label htmlFor="stock">Stock Quantity *</Label>
               <Input
                 id="stock"
                 type="number"
                 value={formData.stock}
                 onChange={(e) => setFormData(prev => ({ ...prev, stock: e.target.value }))}
-                placeholder="0"
                 required
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="brand">Brand</Label>
-              <Input
-                id="brand"
-                value={formData.brand}
-                onChange={(e) => setFormData(prev => ({ ...prev, brand: e.target.value }))}
-                placeholder="Brand name"
               />
             </div>
             <div>
@@ -201,7 +179,7 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
                 id="sku"
                 value={formData.sku}
                 onChange={(e) => setFormData(prev => ({ ...prev, sku: e.target.value }))}
-                placeholder="Product SKU"
+                placeholder="e.g., SHIRT-BLK-L"
               />
             </div>
           </div>
@@ -210,186 +188,193 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
             <Label htmlFor="category">Category *</Label>
             <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
               <SelectTrigger>
-                <SelectValue placeholder="Select category" />
+                <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
                 {categories.map((category) => (
-                  <SelectItem key={category} value={category}>{category}</SelectItem>
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Product Images</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <Button type="button" variant="outline" onClick={handleImageUpload} className="w-full">
-                  <Upload className="w-4 h-4 mr-2" />
-                  Upload Image
-                </Button>
-                {formData.images.length > 0 && (
-                  <div className="grid grid-cols-2 gap-2">
-                    {formData.images.map((image, index) => (
-                      <div key={index} className="relative border rounded-lg p-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm truncate">{image}</span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeImage(index)}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <div>
-            <Label htmlFor="tags">Tags</Label>
-            <Input
-              id="tags"
-              value={formData.tags}
-              onChange={(e) => setFormData(prev => ({ ...prev, tags: e.target.value }))}
-              placeholder="Enter tags separated by commas"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="weight">Weight (lbs)</Label>
-              <Input
-                id="weight"
-                value={formData.weight}
-                onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
-                placeholder="0.0"
-              />
-            </div>
-            <div>
-              <Label htmlFor="dimensions">Dimensions</Label>
-              <Input
-                id="dimensions"
-                value={formData.dimensions}
-                onChange={(e) => setFormData(prev => ({ ...prev, dimensions: e.target.value }))}
-                placeholder="L x W x H"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Product Variants Section */}
+      {/* Colors */}
       <Card>
         <CardHeader>
-          <CardTitle>Product Variants (Colors, Sizes)</CardTitle>
+          <CardTitle>Colors</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {/* Add New Variant */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 p-4 border rounded-lg">
-              <div>
-                <Label>Color Name</Label>
-                <Input
-                  value={newVariant.color}
-                  onChange={(e) => setNewVariant(prev => ({ ...prev, color: e.target.value }))}
-                  placeholder="Red, Blue, etc."
+        <CardContent className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            {commonColors.map((color) => (
+              <Button
+                key={color.name}
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => addColor(color.name)}
+                className="flex items-center space-x-2"
+                disabled={formData.colors.includes(color.name)}
+              >
+                <div 
+                  className="w-4 h-4 rounded-full border border-gray-300"
+                  style={{ backgroundColor: color.code }}
                 />
-              </div>
-              <div>
-                <Label>Color Code</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type="color"
-                    value={newVariant.colorCode}
-                    onChange={(e) => setNewVariant(prev => ({ ...prev, colorCode: e.target.value }))}
-                    className="w-12 h-9"
-                  />
-                  <Input
-                    value={newVariant.colorCode}
-                    onChange={(e) => setNewVariant(prev => ({ ...prev, colorCode: e.target.value }))}
-                    placeholder="#000000"
-                    className="flex-1"
-                  />
-                </div>
-              </div>
-              <div>
-                <Label>Size (Optional)</Label>
-                <Select value={newVariant.size} onValueChange={(value) => setNewVariant(prev => ({ ...prev, size: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Size" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {sizes.map((size) => (
-                      <SelectItem key={size} value={size}>{size}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Stock</Label>
-                <Input
-                  type="number"
-                  value={newVariant.stock}
-                  onChange={(e) => setNewVariant(prev => ({ ...prev, stock: e.target.value }))}
-                  placeholder="0"
-                />
-              </div>
-              <div className="flex items-end">
-                <Button type="button" onClick={addVariant} size="sm">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add
-                </Button>
-              </div>
-            </div>
+                <span>{color.name}</span>
+              </Button>
+            ))}
+          </div>
 
-            {/* Existing Variants */}
-            {variants.length > 0 && (
-              <div className="space-y-2">
-                <Label>Current Variants:</Label>
-                {variants.map((variant) => (
-                  <div key={variant.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className="w-8 h-8 rounded-full border-2"
-                        style={{ backgroundColor: variant.colorCode }}
-                      />
-                      <div>
-                        <span className="font-medium">{variant.color}</span>
-                        {variant.size && <Badge variant="outline" className="ml-2">{variant.size}</Badge>}
-                        <p className="text-sm text-gray-600">Stock: {variant.stock}</p>
-                      </div>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeVariant(variant.id)}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
+          <div className="flex space-x-2">
+            <Input
+              placeholder="Add custom color"
+              value={newColor}
+              onChange={(e) => setNewColor(e.target.value)}
+            />
+            <Button type="button" onClick={() => addColor(newColor)}>
+              <Plus className="w-4 h-4" />
+            </Button>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {formData.colors.map((color) => (
+              <Badge key={color} variant="secondary" className="flex items-center space-x-1">
+                <span>{color}</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeColor(color)}
+                  className="h-4 w-4 p-0 hover:bg-red-100"
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </Badge>
+            ))}
           </div>
         </CardContent>
       </Card>
 
+      {/* Sizes */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Sizes</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            {commonSizes.map((size) => (
+              <Button
+                key={size}
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => addSize(size)}
+                disabled={formData.sizes.includes(size)}
+              >
+                {size}
+              </Button>
+            ))}
+          </div>
+
+          <div className="flex space-x-2">
+            <Input
+              placeholder="Add custom size"
+              value={newSize}
+              onChange={(e) => setNewSize(e.target.value)}
+            />
+            <Button type="button" onClick={() => addSize(newSize)}>
+              <Plus className="w-4 h-4" />
+            </Button>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {formData.sizes.map((size) => (
+              <Badge key={size} variant="secondary" className="flex items-center space-x-1">
+                <span>{size}</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeSize(size)}
+                  className="h-4 w-4 p-0 hover:bg-red-100"
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </Badge>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Additional Details */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Additional Details</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="weight">Weight (kg)</Label>
+              <Input
+                id="weight"
+                type="number"
+                step="0.01"
+                value={formData.weight}
+                onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label htmlFor="dimensions">Dimensions (L x W x H cm)</Label>
+              <Input
+                id="dimensions"
+                value={formData.dimensions}
+                onChange={(e) => setFormData(prev => ({ ...prev, dimensions: e.target.value }))}
+                placeholder="e.g., 30 x 20 x 10"
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label>Tags</Label>
+            <div className="flex space-x-2 mt-2">
+              <Input
+                placeholder="Add tags (e.g., summer, casual, cotton)"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+              />
+              <Button type="button" onClick={() => addTag(newTag)}>
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {formData.tags.map((tag) => (
+                <Badge key={tag} variant="outline" className="flex items-center space-x-1">
+                  <span>{tag}</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeTag(tag)}
+                    className="h-4 w-4 p-0 hover:bg-red-100"
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Form Actions */}
       <div className="flex justify-end space-x-4">
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" style={{ backgroundColor: '#00B14F' }} className="text-white hover:opacity-90">
+        <Button type="submit" style={{ backgroundColor: '#00B14F' }} className="text-white">
           {product ? "Update Product" : "Add Product"}
         </Button>
       </div>

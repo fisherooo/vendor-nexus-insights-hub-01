@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Package, Star, Users, AlertTriangle, CheckCircle, X, Filter, Search, TrendingUp, DollarSign, ShoppingCart, Clock, Eye, Archive } from "lucide-react";
+import { Bell, Package, Star, Users, AlertTriangle, CheckCircle, X, Filter, Search, TrendingUp, DollarSign, ShoppingCart, Clock, Archive, MarkAsUnread } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -209,17 +209,23 @@ export function NotificationsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Notifications Center</h1>
-          <p className="text-gray-600 mt-1">
-            Stay updated with your store activities and important alerts
+          <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
+          <div className="flex items-center space-x-4 mt-2">
+            <p className="text-gray-600">Stay updated with your store activities</p>
             {unreadCount > 0 && (
-              <Badge className="ml-2" style={{ backgroundColor: '#00B14F' }}>
+              <Badge style={{ backgroundColor: '#00B14F' }} className="text-white">
                 {unreadCount} unread
               </Badge>
             )}
-          </p>
+            {urgentCount > 0 && (
+              <Badge className="bg-red-100 text-red-800">
+                {urgentCount} urgent
+              </Badge>
+            )}
+          </div>
         </div>
         <div className="flex space-x-2">
           {unreadCount > 0 && (
@@ -235,70 +241,7 @@ export function NotificationsPage() {
         </div>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total</p>
-                <p className="text-2xl font-bold">{notifications.length}</p>
-              </div>
-              <Bell className="w-8 h-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Unread</p>
-                <p className="text-2xl font-bold text-orange-600">{unreadCount}</p>
-              </div>
-              <Eye className="w-8 h-8 text-orange-600" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Urgent</p>
-                <p className="text-2xl font-bold text-red-600">{urgentCount}</p>
-              </div>
-              <AlertTriangle className="w-8 h-8 text-red-600" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Actionable</p>
-                <p className="text-2xl font-bold text-purple-600">{actionableCount}</p>
-              </div>
-              <Clock className="w-8 h-8 text-purple-600" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Today</p>
-                <p className="text-2xl font-bold" style={{ color: '#00B14F' }}>
-                  {notifications.filter(n => 
-                    n.timestamp.includes("minute") || n.timestamp.includes("hour")
-                  ).length}
-                </p>
-              </div>
-              <CheckCircle className="w-8 h-8" style={{ color: '#00B14F' }} />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filters and Search */}
+      {/* Filters */}
       <Card>
         <CardContent className="p-4">
           <div className="flex flex-col md:flex-row gap-4">
@@ -315,8 +258,7 @@ export function NotificationsPage() {
             </div>
             <Select value={filterType} onValueChange={setFilterType}>
               <SelectTrigger className="w-full md:w-40">
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Type" />
+                <SelectValue placeholder="All Types" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
@@ -331,7 +273,7 @@ export function NotificationsPage() {
             </Select>
             <Select value={filterPriority} onValueChange={setFilterPriority}>
               <SelectTrigger className="w-full md:w-40">
-                <SelectValue placeholder="Priority" />
+                <SelectValue placeholder="All Priority" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Priority</SelectItem>
@@ -345,7 +287,7 @@ export function NotificationsPage() {
         </CardContent>
       </Card>
 
-      {/* Notifications List with Tabs */}
+      {/* Notifications */}
       <Card>
         <CardHeader>
           <Tabs value={selectedTab} onValueChange={setSelectedTab}>
@@ -357,99 +299,106 @@ export function NotificationsPage() {
           </Tabs>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {filteredNotifications.length === 0 ? (
-              <div className="text-center py-8">
-                <Archive className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">No notifications match your current filters</p>
+              <div className="text-center py-12">
+                <Archive className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No notifications found</h3>
+                <p className="text-gray-500">Try adjusting your filters or check back later</p>
               </div>
             ) : (
               filteredNotifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`flex items-start justify-between p-4 border rounded-lg transition-all hover:shadow-md ${
-                    notification.read ? "bg-gray-50" : "bg-white border-l-4"
+                  className={`p-4 border rounded-lg transition-all hover:shadow-sm ${
+                    notification.read ? "bg-gray-50/50" : "bg-white border-l-4"
                   }`}
                   style={!notification.read ? { borderLeftColor: '#00B14F' } : {}}
                 >
-                  <div className="flex items-start space-x-4">
-                    <div className={`p-2 rounded-full flex-shrink-0 ${
-                      notification.read ? "bg-gray-200" : "bg-green-100"
-                    }`}>
-                      <div className={getNotificationColor(notification.priority)}>
-                        {getNotificationIcon(notification.type)}
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start space-x-3 flex-1">
+                      <div className={`p-2 rounded-full flex-shrink-0 ${
+                        notification.read ? "bg-gray-100" : "bg-green-50"
+                      }`}>
+                        <div className={getNotificationColor(notification.priority)}>
+                          {getNotificationIcon(notification.type)}
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <h3 className={`font-medium truncate ${notification.read ? "text-gray-600" : "text-gray-900"}`}>
-                          {notification.title}
-                        </h3>
-                        <Badge variant="outline" className={`text-xs ${getPriorityColor(notification.priority)}`}>
-                          {notification.priority}
-                        </Badge>
-                        {notification.actionable && (
-                          <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                            Action Required
+                      
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <h3 className={`font-medium truncate ${notification.read ? "text-gray-600" : "text-gray-900"}`}>
+                            {notification.title}
+                          </h3>
+                          <Badge variant="outline" className={`text-xs ${getPriorityColor(notification.priority)}`}>
+                            {notification.priority}
                           </Badge>
-                        )}
-                        {!notification.read && (
-                          <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: '#00B14F' }} />
-                        )}
-                      </div>
-                      <p className={`text-sm mb-2 ${notification.read ? "text-gray-500" : "text-gray-700"}`}>
-                        {notification.message}
-                      </p>
-                      {notification.metadata && (
-                        <div className="flex flex-wrap gap-2 mb-2">
-                          {notification.metadata.orderId && (
-                            <Badge variant="secondary" className="text-xs">
-                              Order: {notification.metadata.orderId}
+                          {notification.actionable && (
+                            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                              Action Required
                             </Badge>
                           )}
-                          {notification.metadata.amount && (
-                            <Badge variant="secondary" className="text-xs">
-                              Amount: {notification.metadata.amount}
-                            </Badge>
-                          )}
-                          {notification.metadata.productId && (
-                            <Badge variant="secondary" className="text-xs">
-                              Product: {notification.metadata.productId}
-                            </Badge>
+                          {!notification.read && (
+                            <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: '#00B14F' }} />
                           )}
                         </div>
-                      )}
-                      <p className="text-xs text-gray-400">{notification.timestamp}</p>
+                        
+                        <p className={`text-sm mb-2 ${notification.read ? "text-gray-500" : "text-gray-700"}`}>
+                          {notification.message}
+                        </p>
+                        
+                        {notification.metadata && (
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {notification.metadata.orderId && (
+                              <Badge variant="secondary" className="text-xs">
+                                {notification.metadata.orderId}
+                              </Badge>
+                            )}
+                            {notification.metadata.amount && (
+                              <Badge variant="secondary" className="text-xs">
+                                {notification.metadata.amount}
+                              </Badge>
+                            )}
+                          </div>
+                        )}
+                        
+                        <p className="text-xs text-gray-400 flex items-center">
+                          <Clock className="w-3 h-3 mr-1" />
+                          {notification.timestamp}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center space-x-2 flex-shrink-0">
-                    {notification.actionable && (
+                    
+                    <div className="flex items-center space-x-2 flex-shrink-0">
+                      {notification.actionable && (
+                        <Button
+                          size="sm"
+                          onClick={() => handleAction(notification)}
+                          style={{ backgroundColor: '#00B14F' }}
+                          className="text-white"
+                        >
+                          Action
+                        </Button>
+                      )}
+                      {!notification.read && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => markAsRead(notification.id)}
+                          className="text-gray-500 hover:text-gray-700"
+                        >
+                          <CheckCircle className="w-4 h-4" />
+                        </Button>
+                      )}
                       <Button
+                        variant="ghost"
                         size="sm"
-                        onClick={() => handleAction(notification)}
-                        style={{ backgroundColor: '#00B14F' }}
-                        className="text-white"
+                        onClick={() => deleteNotification(notification.id)}
+                        className="text-red-500 hover:text-red-700"
                       >
-                        Take Action
+                        <X className="w-4 h-4" />
                       </Button>
-                    )}
-                    {!notification.read && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => markAsRead(notification.id)}
-                      >
-                        <CheckCircle className="w-4 h-4" />
-                      </Button>
-                    )}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => deleteNotification(notification.id)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
+                    </div>
                   </div>
                 </div>
               ))

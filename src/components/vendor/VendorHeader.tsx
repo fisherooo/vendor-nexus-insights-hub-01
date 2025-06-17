@@ -24,7 +24,7 @@ export function VendorHeader({ onBack, onProfileClick }: VendorHeaderProps) {
           </div>
         </div>
         
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-6">
           <div className="relative">
             <Button variant="outline" size="sm">
               <Bell className="w-4 h-4" />
@@ -37,7 +37,7 @@ export function VendorHeader({ onBack, onProfileClick }: VendorHeaderProps) {
             </Badge>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <div className="text-right">
               <p className="text-sm font-medium text-gray-900">John Doe</p>
               <p className="text-xs text-gray-600">Store Owner</p>
@@ -47,7 +47,7 @@ export function VendorHeader({ onBack, onProfileClick }: VendorHeaderProps) {
               className="p-0"
               onClick={onProfileClick}
             >
-              <Avatar className="w-8 h-8">
+              <Avatar className="w-9 h-9">
                 <AvatarFallback className="text-sm">JD</AvatarFallback>
               </Avatar>
             </Button>

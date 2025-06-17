@@ -33,10 +33,9 @@ export function VendorSidebar({ currentPage, onPageChange }: VendorSidebarProps)
                 isActive={currentPage === item.id}
                 className={`w-full justify-start ${
                   currentPage === item.id 
-                    ? 'text-white' 
+                    ? 'bg-green-50 text-green-700 border-r-2 border-green-500' 
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
-                style={currentPage === item.id ? { backgroundColor: '#00B14F' } : {}}
               >
                 <item.icon className="w-4 h-4 mr-3" />
                 {item.label}
