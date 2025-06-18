@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Upload, Store, Percent, Palette } from "lucide-react";
+import { DiscountCodeForm } from "@/components/vendor/forms/DiscountCodeForm";
 
 export function ShopManagementPage() {
   const [shopData, setShopData] = useState({
@@ -48,6 +49,8 @@ export function ShopManagementPage() {
     }
   ]);
 
+  const [showDiscountForm, setShowDiscountForm] = useState(false);
+
   const handleShopUpdate = (field: string, value: any) => {
     setShopData(prev => ({ ...prev, [field]: value }));
   };
@@ -64,12 +67,32 @@ export function ShopManagementPage() {
     ));
   };
 
+  const addNewDiscount = (newDiscount: any) => {
+    setDiscounts(prev => [...prev, newDiscount]);
+    setShowDiscountForm(false);
+  };
+
   const themeColors = [
     { name: "Green", value: "green", color: "#00B14F" },
     { name: "Blue", value: "blue", color: "#3B82F6" },
     { name: "Purple", value: "purple", color: "#8B5CF6" },
     { name: "Red", value: "red", color: "#EF4444" }
   ];
+
+  if (showDiscountForm) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Shop Management</h1>
+          <p className="text-gray-600 mt-1">Create a new discount code</p>
+        </div>
+        <DiscountCodeForm 
+          onSubmit={addNewDiscount}
+          onCancel={() => setShowDiscountForm(false)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -237,7 +260,7 @@ export function ShopManagementPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="font-medium">Active Discount Codes</h4>
-              <Button size="sm">Add New Code</Button>
+              <Button size="sm" onClick={() => setShowDiscountForm(true)}>Add New Code</Button>
             </div>
 
             {discounts.map((discount) => (

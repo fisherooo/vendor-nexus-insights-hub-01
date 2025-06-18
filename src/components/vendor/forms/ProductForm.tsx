@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus } from "lucide-react";
+import { X, Plus, Upload, Image } from "lucide-react";
 
 interface ProductFormProps {
   product?: any;
@@ -22,6 +22,9 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
     price: product?.price || "",
     category: product?.category || "",
     stock: product?.stock || "",
+    minStock: product?.minStock || "",
+    maxStock: product?.maxStock || "",
+    reorderPoint: product?.reorderPoint || "",
     images: product?.images || [],
     colors: product?.colors || [],
     sizes: product?.sizes || [],
@@ -111,6 +114,27 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
     }));
   };
 
+  const handleImageUpload = () => {
+    if (formData.images.length >= 4) {
+      alert("Maximum 4 images allowed per product");
+      return;
+    }
+    
+    // Simulate image upload
+    const newImage = `product_image_${Date.now()}.jpg`;
+    setFormData(prev => ({
+      ...prev,
+      images: [...prev.images, newImage]
+    }));
+  };
+
+  const removeImage = (imageIndex: number) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, index) => index !== imageIndex)
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
@@ -118,6 +142,47 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Product Images */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Product Images (Max 4)</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {formData.images.map((image, index) => (
+              <div key={index} className="relative group">
+                <div className="w-full h-32 bg-gray-200 rounded-lg flex items-center justify-center">
+                  <Image className="w-8 h-8 text-gray-400" />
+                </div>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => removeImage(index)}
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+                <p className="text-xs text-gray-600 mt-1 truncate">{image}</p>
+              </div>
+            ))}
+            {formData.images.length < 4 && (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-32 border-dashed"
+                onClick={handleImageUpload}
+              >
+                <div className="text-center">
+                  <Upload className="w-6 h-6 mx-auto mb-2" />
+                  <span className="text-sm">Upload Image</span>
+                </div>
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Basic Information */}
       <Card>
         <CardHeader>
@@ -168,7 +233,7 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
               />
             </div>
             <div>
-              <Label htmlFor="stock">Stock Quantity *</Label>
+              <Label htmlFor="stock">Current Stock *</Label>
               <Input
                 id="stock"
                 type="number"
@@ -202,6 +267,49 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
                 ))}
               </SelectContent>
             </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Inventory Management */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Inventory Management</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="minStock">Minimum Stock Level *</Label>
+              <Input
+                id="minStock"
+                type="number"
+                value={formData.minStock}
+                onChange={(e) => setFormData(prev => ({ ...prev, minStock: e.target.value }))}
+                placeholder="Low stock alert threshold"
+                required
+              />
+              <p className="text-xs text-gray-500 mt-1">Alert when stock reaches this level</p>
+            </div>
+            <div>
+              <Label htmlFor="maxStock">Maximum Stock Level</Label>
+              <Input
+                id="maxStock"
+                type="number"
+                value={formData.maxStock}
+                onChange={(e) => setFormData(prev => ({ ...prev, maxStock: e.target.value }))}
+                placeholder="Maximum inventory capacity"
+              />
+            </div>
+            <div>
+              <Label htmlFor="reorderPoint">Reorder Point</Label>
+              <Input
+                id="reorderPoint"
+                type="number"
+                value={formData.reorderPoint}
+                onChange={(e) => setFormData(prev => ({ ...prev, reorderPoint: e.target.value }))}
+                placeholder="When to reorder stock"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
