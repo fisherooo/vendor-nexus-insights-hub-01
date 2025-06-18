@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -264,7 +265,7 @@ export function SettingsPage() {
             <CardHeader>
               <CardTitle>Notification Settings</CardTitle>
               <CardDescription>Configure how you receive notifications</CardDescription>
-            </Card>
+            </CardHeader>
             <CardContent>
               <p className="text-gray-600">Notification settings will be available soon.</p>
             </CardContent>
