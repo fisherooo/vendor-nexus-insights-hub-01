@@ -1,7 +1,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Bell, ArrowLeft } from "lucide-react";
 
 interface VendorHeaderProps {
@@ -35,22 +34,6 @@ export function VendorHeader({ onBack, onProfileClick }: VendorHeaderProps) {
             >
               3
             </Badge>
-          </div>
-          
-          <div className="flex items-center space-x-3">
-            <div className="text-right">
-              <p className="text-sm font-medium text-gray-900">John Doe</p>
-              <p className="text-xs text-gray-600">Store Owner</p>
-            </div>
-            <Button 
-              variant="ghost" 
-              className="p-0"
-              onClick={onProfileClick}
-            >
-              <Avatar className="w-9 h-9">
-                <AvatarFallback className="text-sm">JD</AvatarFallback>
-              </Avatar>
-            </Button>
           </div>
         </div>
       </div>

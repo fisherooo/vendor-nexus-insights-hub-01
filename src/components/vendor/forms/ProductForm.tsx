@@ -34,7 +34,6 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
 
   const [newColor, setNewColor] = useState("");
   const [newSize, setNewSize] = useState("");
-  const [newTag, setNewTag] = useState("");
 
   const categories = [
     "Electronics", "Clothing", "Home & Garden", "Sports", "Books", 
@@ -55,6 +54,12 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
   ];
 
   const commonSizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+
+  const availableTags = [
+    "Summer", "Winter", "Casual", "Formal", "Cotton", "Polyester", "Silk", "Wool",
+    "Waterproof", "Breathable", "Eco-friendly", "Organic", "Premium", "Budget",
+    "Limited Edition", "Best Seller", "New Arrival", "On Sale", "Trending", "Classic"
+  ];
 
   const addColor = (color: string) => {
     if (color && !formData.colors.includes(color)) {
@@ -96,7 +101,6 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
         ...prev,
         tags: [...prev.tags, tag]
       }));
-      setNewTag("");
     }
   };
 
@@ -233,8 +237,18 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
               placeholder="Add custom color"
               value={newColor}
               onChange={(e) => setNewColor(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  addColor(newColor);
+                }
+              }}
             />
-            <Button type="button" onClick={() => addColor(newColor)}>
+            <Button 
+              type="button" 
+              onClick={() => addColor(newColor)}
+              disabled={!newColor.trim()}
+            >
               <Plus className="w-4 h-4" />
             </Button>
           </div>
@@ -284,8 +298,18 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
               placeholder="Add custom size"
               value={newSize}
               onChange={(e) => setNewSize(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  addSize(newSize);
+                }
+              }}
             />
-            <Button type="button" onClick={() => addSize(newSize)}>
+            <Button 
+              type="button" 
+              onClick={() => addSize(newSize)}
+              disabled={!newSize.trim()}
+            >
               <Plus className="w-4 h-4" />
             </Button>
           </div>
@@ -299,6 +323,47 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
                   variant="ghost"
                   size="sm"
                   onClick={() => removeSize(size)}
+                  className="h-4 w-4 p-0 hover:bg-red-100"
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </Badge>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Tags */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Tags</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label>Add Tags</Label>
+            <Select onValueChange={addTag}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select tags for your product" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableTags.filter(tag => !formData.tags.includes(tag)).map((tag) => (
+                  <SelectItem key={tag} value={tag}>
+                    {tag}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {formData.tags.map((tag) => (
+              <Badge key={tag} variant="outline" className="flex items-center space-x-1">
+                <span>{tag}</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeTag(tag)}
                   className="h-4 w-4 p-0 hover:bg-red-100"
                 >
                   <X className="w-3 h-3" />
@@ -334,36 +399,6 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
                 onChange={(e) => setFormData(prev => ({ ...prev, dimensions: e.target.value }))}
                 placeholder="e.g., 30 x 20 x 10"
               />
-            </div>
-          </div>
-
-          <div>
-            <Label>Tags</Label>
-            <div className="flex space-x-2 mt-2">
-              <Input
-                placeholder="Add tags (e.g., summer, casual, cotton)"
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-              />
-              <Button type="button" onClick={() => addTag(newTag)}>
-                <Plus className="w-4 h-4" />
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {formData.tags.map((tag) => (
-                <Badge key={tag} variant="outline" className="flex items-center space-x-1">
-                  <span>{tag}</span>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeTag(tag)}
-                    className="h-4 w-4 p-0 hover:bg-red-100"
-                  >
-                    <X className="w-3 h-3" />
-                  </Button>
-                </Badge>
-              ))}
             </div>
           </div>
         </CardContent>
