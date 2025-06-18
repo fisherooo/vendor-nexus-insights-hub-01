@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -95,14 +94,14 @@ export function SettingsPage() {
         <p className="text-gray-600 mt-1">Manage your account and team settings</p>
       </div>
 
-      <Tabs defaultValue="team" className="space-y-4">
+      <Tabs defaultValue="account" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="team">Team Management</TabsTrigger>
+          {/* <TabsTrigger value="team">Team Management</TabsTrigger> */}
           <TabsTrigger value="account">Account Settings</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="team" className="space-y-4">
+        {/* <TabsContent value="team" className="space-y-4">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -228,7 +227,7 @@ export function SettingsPage() {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabsContent> */}
 
         <TabsContent value="account" className="space-y-4">
           <Card>
@@ -265,7 +264,7 @@ export function SettingsPage() {
             <CardHeader>
               <CardTitle>Notification Settings</CardTitle>
               <CardDescription>Configure how you receive notifications</CardDescription>
-            </CardHeader>
+            </Card>
             <CardContent>
               <p className="text-gray-600">Notification settings will be available soon.</p>
             </CardContent>

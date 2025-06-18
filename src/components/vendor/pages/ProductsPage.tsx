@@ -1,8 +1,8 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { Plus, Edit, Trash2, Eye, Star, Package, AlertTriangle } from "lucide-react";
 import { ProductForm } from "@/components/vendor/forms/ProductForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -70,6 +70,16 @@ export function ProductsPage() {
 
   const handleDeleteProduct = (productId: string) => {
     setProducts(products.filter(p => p.id !== productId));
+  };
+
+  const toggleProductStatus = (productId: string) => {
+    setProducts(products.map(product => {
+      if (product.id === productId) {
+        const newStatus = product.status === "active" ? "draft" : "active";
+        return { ...product, status: newStatus };
+      }
+      return product;
+    }));
   };
 
   const getStatusColor = (status: string) => {
@@ -196,13 +206,22 @@ export function ProductsPage() {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Button variant="outline" size="sm" onClick={() => handleEditProduct(product)}>
-                    <Edit className="w-4 h-4" />
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleDeleteProduct(product.id)}>
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600">Active</span>
+                    <Switch
+                      checked={product.status === "active"}
+                      onCheckedChange={() => toggleProductStatus(product.id)}
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button variant="outline" size="sm" onClick={() => handleEditProduct(product)}>
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleDeleteProduct(product.id)}>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}

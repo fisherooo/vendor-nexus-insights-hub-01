@@ -16,7 +16,7 @@ export function VendorSidebar({ currentPage, onPageChange }: VendorSidebarProps)
     { id: "analytics", label: "Analytics", icon: BarChart3 },
     { id: "shop", label: "Shop Settings", icon: Store },
     { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "settings", label: "Settings", icon: Settings },
+    // { id: "settings", label: "Settings", icon: Settings },
   ];
 
   return (

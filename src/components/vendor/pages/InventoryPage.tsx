@@ -1,9 +1,9 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { AlertTriangle, Package, TrendingDown, TrendingUp, Plus, Minus, Edit } from "lucide-react";
 import { InventoryEditForm } from "@/components/vendor/forms/InventoryEditForm";
 
@@ -119,6 +119,17 @@ export function InventoryPage() {
       item.id === updatedItem.id ? updatedItem : item
     ));
     setEditingItem(null);
+  };
+
+  const toggleItemStatus = (id: string) => {
+    setInventory(prev => prev.map(item => {
+      if (item.id === id) {
+        const newStatus = item.status === "out_of_stock" ? "in_stock" : 
+                         item.status === "in_stock" ? "out_of_stock" : item.status;
+        return { ...item, status: newStatus };
+      }
+      return item;
+    }));
   };
 
   const getStatusColor = (status: string) => {
@@ -297,6 +308,14 @@ export function InventoryPage() {
                           }
                         }
                       }}
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600">Active</span>
+                    <Switch
+                      checked={item.status !== "out_of_stock"}
+                      onCheckedChange={() => toggleItemStatus(item.id)}
                     />
                   </div>
 
