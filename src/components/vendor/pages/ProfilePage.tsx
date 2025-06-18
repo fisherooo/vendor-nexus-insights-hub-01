@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { User, Edit, Plus, Trash2, Shield, Mail, Phone, Calendar } from "lucide-react";
+import { User, Edit, Plus, Trash2, Shield, Mail, Phone, Calendar, MapPin, Building, Globe, Star } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
 
 interface TeamMember {
@@ -34,7 +33,19 @@ export function ProfilePage() {
     address: "123 Business St, City, State 12345",
     joinedDate: "January 2024",
     totalSales: "$45,230",
-    totalOrders: "892"
+    totalOrders: "892",
+    website: "www.doeelectronics.com",
+    businessType: "Electronics Retailer",
+    taxId: "12-3456789",
+    bankAccount: "****1234",
+    shippingRegions: ["North America", "Europe"],
+    businessHours: "9:00 AM - 6:00 PM EST",
+    description: "Leading provider of quality electronics and accessories with over 10 years of experience.",
+    socialMedia: {
+      facebook: "facebook.com/doeelectronics",
+      instagram: "@doeelectronics",
+      twitter: "@doeelectronics"
+    }
   });
 
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
@@ -141,14 +152,14 @@ export function ProfilePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Profile & Team</h1>
-        <p className="text-gray-600 mt-1">Manage your profile and team members</p>
+        <h1 className="text-3xl font-bold text-gray-900">Profile & Business</h1>
+        <p className="text-gray-600 mt-1">Manage your profile and business information</p>
       </div>
 
       <Tabs defaultValue="profile" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="profile">My Profile</TabsTrigger>
-          <TabsTrigger value="team">Team Management</TabsTrigger>
+          <TabsTrigger value="profile">Business Profile</TabsTrigger>
+          {/* <TabsTrigger value="team">Team Management</TabsTrigger> */}
           <TabsTrigger value="security">Security</TabsTrigger>
         </TabsList>
 
@@ -175,6 +186,16 @@ export function ProfilePage() {
                     <p className="font-bold">{userProfile.totalOrders}</p>
                   </div>
                 </div>
+                <div className="grid grid-cols-1 gap-2 mt-4 pt-4 border-t">
+                  <div className="flex items-center justify-center space-x-1">
+                    <Calendar className="w-4 h-4 text-gray-500" />
+                    <span className="text-sm text-gray-600">Joined {userProfile.joinedDate}</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-1">
+                    <Star className="w-4 h-4 text-yellow-500" />
+                    <span className="text-sm text-gray-600">4.8 Rating</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
@@ -183,57 +204,168 @@ export function ProfilePage() {
               <Card>
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle>Profile Information</CardTitle>
+                    <CardTitle>Business Information</CardTitle>
                     <Button variant="outline" size="sm">
                       <Edit className="w-4 h-4 mr-2" />
                       Edit
                     </Button>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="name">Full Name</Label>
-                      <Input
-                        id="name"
-                        value={userProfile.name}
-                        onChange={(e) => setUserProfile(prev => ({ ...prev, name: e.target.value }))}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="email">Email Address</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={userProfile.email}
-                        onChange={(e) => setUserProfile(prev => ({ ...prev, email: e.target.value }))}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="phone">Phone Number</Label>
-                      <Input
-                        id="phone"
-                        value={userProfile.phone}
-                        onChange={(e) => setUserProfile(prev => ({ ...prev, phone: e.target.value }))}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="company">Company</Label>
-                      <Input
-                        id="company"
-                        value={userProfile.company}
-                        onChange={(e) => setUserProfile(prev => ({ ...prev, company: e.target.value }))}
-                      />
-                    </div>
-                  </div>
+                <CardContent className="space-y-6">
+                  {/* Basic Information */}
                   <div>
-                    <Label htmlFor="address">Address</Label>
-                    <Input
-                      id="address"
-                      value={userProfile.address}
-                      onChange={(e) => setUserProfile(prev => ({ ...prev, address: e.target.value }))}
-                    />
+                    <h4 className="font-medium text-gray-900 mb-3">Basic Information</h4>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="name">Full Name</Label>
+                        <Input
+                          id="name"
+                          value={userProfile.name}
+                          onChange={(e) => setUserProfile(prev => ({ ...prev, name: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="email">Email Address</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={userProfile.email}
+                          onChange={(e) => setUserProfile(prev => ({ ...prev, email: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="phone">Phone Number</Label>
+                        <Input
+                          id="phone"
+                          value={userProfile.phone}
+                          onChange={(e) => setUserProfile(prev => ({ ...prev, phone: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="company">Company Name</Label>
+                        <Input
+                          id="company"
+                          value={userProfile.company}
+                          onChange={(e) => setUserProfile(prev => ({ ...prev, company: e.target.value }))}
+                        />
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Business Details */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">Business Details</h4>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="businessType">Business Type</Label>
+                        <Select value={userProfile.businessType}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Electronics Retailer">Electronics Retailer</SelectItem>
+                            <SelectItem value="Fashion & Apparel">Fashion & Apparel</SelectItem>
+                            <SelectItem value="Home & Garden">Home & Garden</SelectItem>
+                            <SelectItem value="Health & Beauty">Health & Beauty</SelectItem>
+                            <SelectItem value="Books & Media">Books & Media</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="taxId">Tax ID</Label>
+                        <Input
+                          id="taxId"
+                          value={userProfile.taxId}
+                          onChange={(e) => setUserProfile(prev => ({ ...prev, taxId: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="website">Website</Label>
+                        <Input
+                          id="website"
+                          value={userProfile.website}
+                          onChange={(e) => setUserProfile(prev => ({ ...prev, website: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="businessHours">Business Hours</Label>
+                        <Input
+                          id="businessHours"
+                          value={userProfile.businessHours}
+                          onChange={(e) => setUserProfile(prev => ({ ...prev, businessHours: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Address & Contact */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">Address & Contact</h4>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="address">Business Address</Label>
+                        <Input
+                          id="address"
+                          value={userProfile.address}
+                          onChange={(e) => setUserProfile(prev => ({ ...prev, address: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="description">Business Description</Label>
+                        <textarea
+                          id="description"
+                          className="w-full p-3 border rounded-md"
+                          rows={3}
+                          value={userProfile.description}
+                          onChange={(e) => setUserProfile(prev => ({ ...prev, description: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Social Media */}
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-3">Social Media</h4>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="facebook">Facebook</Label>
+                        <Input
+                          id="facebook"
+                          value={userProfile.socialMedia.facebook}
+                          onChange={(e) => setUserProfile(prev => ({ 
+                            ...prev, 
+                            socialMedia: { ...prev.socialMedia, facebook: e.target.value }
+                          }))}
+                          placeholder="facebook.com/yourpage"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="instagram">Instagram</Label>
+                        <Input
+                          id="instagram"
+                          value={userProfile.socialMedia.instagram}
+                          onChange={(e) => setUserProfile(prev => ({ 
+                            ...prev, 
+                            socialMedia: { ...prev.socialMedia, instagram: e.target.value }
+                          }))}
+                          placeholder="@yourbusiness"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="twitter">Twitter</Label>
+                        <Input
+                          id="twitter"
+                          value={userProfile.socialMedia.twitter}
+                          onChange={(e) => setUserProfile(prev => ({ 
+                            ...prev, 
+                            socialMedia: { ...prev.socialMedia, twitter: e.target.value }
+                          }))}
+                          placeholder="@yourbusiness"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   <Button onClick={updateProfile} style={{ backgroundColor: '#00B14F' }} className="text-white">
                     Save Changes
                   </Button>
@@ -243,7 +375,7 @@ export function ProfilePage() {
           </div>
         </TabsContent>
 
-        <TabsContent value="team" className="space-y-4">
+        {/* <TabsContent value="team" className="space-y-4">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -397,7 +529,7 @@ export function ProfilePage() {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabsContent> */}
 
         <TabsContent value="security" className="space-y-4">
           <Card>
