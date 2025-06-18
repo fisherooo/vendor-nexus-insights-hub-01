@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Package, Star, Users, AlertTriangle, CheckCircle, X, Filter, Search, TrendingUp, DollarSign, ShoppingCart, Clock, Archive, MarkAsUnread } from "lucide-react";
+import { Bell, Package, Star, Users, AlertTriangle, CheckCircle, X, Filter, Search, TrendingUp, DollarSign, ShoppingCart, Clock, Archive } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
