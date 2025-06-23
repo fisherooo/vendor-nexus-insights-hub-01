@@ -26,135 +26,109 @@ interface ProductUploadFormProps {
   onCancel: () => void;
 }
 
-export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps) {
-  console.log("ProductUploadForm rendering");
-  
-  const [formData, setFormData] = useState(() => {
-    console.log("Initializing formData state");
-    return {
-      // Category Selection
-      mainCategory: "",
-      subCategory: "",
-      subSubCategory: "",
-      
-      // Product Core Info
-      title: "",
-      subtitle: "",
-      brandName: "",
-      hsnCode: "",
-      modelNumber: "",
-      gender: [] as string[],
-      
-      // Description & Highlights
-      description: "",
-      keyFeatures: [] as string[],
-      howToUse: "",
-      ingredients: "",
-      
-      // Variants
-      variants: [] as ProductVariant[],
-      
-      // Images & Media
-      mainImages: [] as string[],
-      videoUrl: "",
-      
-      // Pricing & Inventory
-      mrp: "",
-      sellingPrice: "",
-      taxClass: "",
-      lowStockAlert: "",
-      
-      // Shipping & Packaging
-      dimensions: { length: "", width: "", height: "" },
-      weight: "",
-      packType: "",
-      dispatchTime: "",
-      returnPolicy: "",
-      codAvailable: false,
-      
-      // SEO
-      searchTags: [] as string[],
-      metaTitle: "",
-      metaDescription: "",
-      internalNotes: "",
-      
-      // Filters
-      occasion: [] as string[],
-      material: "",
-      ecoFriendly: false,
-      bestFor: [] as string[],
-      
-      // Visibility
-      isLive: false,
-      showInNewArrivals: false,
-      featureOnHomepage: false,
-      enableForCampaigns: false
-    };
-  });
+// Move ALL static data outside component to prevent recreation
+const mainCategories = [
+  "Fashion", "Beauty & Personal Care", "Electronics", "Home & Kitchen",
+  "Sports & Outdoors", "Books & Media", "Health & Wellness", "Automotive"
+];
 
+const subCategories: Record<string, string[]> = {
+  "Fashion": ["Men's Fashion", "Women's Fashion", "Kids Fashion", "Accessories"],
+  "Beauty & Personal Care": ["Skincare", "Hair Care", "Makeup", "Fragrances"],
+  "Electronics": ["Mobile & Tablets", "Computers", "Audio", "Gaming"],
+  "Home & Kitchen": ["Furniture", "Appliances", "Decor", "Kitchenware"]
+};
+
+const subSubCategories: Record<string, string[]> = {
+  "Men's Fashion": ["T-Shirts", "Shirts", "Jeans", "Shoes"],
+  "Women's Fashion": ["Dresses", "Tops", "Bottoms", "Footwear"],
+  "Skincare": ["Cleansers", "Moisturizers", "Serums", "Sunscreen"],
+  "Hair Care": ["Shampoo", "Conditioner", "Hair Oil", "Styling Products"]
+};
+
+const genderOptions = ["Men", "Women", "Unisex", "Kids", "Baby"];
+const occasionOptions = ["Casual", "Festive", "Office", "Party", "Wedding", "Sports"];
+const bestForOptions = ["Oily Skin", "Dry Skin", "Sensitive Skin", "All Skin Types"];
+const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL", "Free Size"];
+const colorOptions = [
+  { name: "Black", hex: "#000000" },
+  { name: "White", hex: "#FFFFFF" },
+  { name: "Red", hex: "#FF0000" },
+  { name: "Blue", hex: "#0000FF" },
+  { name: "Green", hex: "#008000" },
+  { name: "Yellow", hex: "#FFFF00" },
+  { name: "Pink", hex: "#FFC0CB" },
+  { name: "Purple", hex: "#800080" }
+];
+
+const initialFormData = {
+  mainCategory: "",
+  subCategory: "",
+  subSubCategory: "",
+  title: "",
+  subtitle: "",
+  brandName: "",
+  hsnCode: "",
+  modelNumber: "",
+  gender: [] as string[],
+  description: "",
+  keyFeatures: [] as string[],
+  howToUse: "",
+  ingredients: "",
+  variants: [] as ProductVariant[],
+  mainImages: [] as string[],
+  videoUrl: "",
+  mrp: "",
+  sellingPrice: "",
+  taxClass: "",
+  lowStockAlert: "",
+  dimensions: { length: "", width: "", height: "" },
+  weight: "",
+  packType: "",
+  dispatchTime: "",
+  returnPolicy: "",
+  codAvailable: false,
+  searchTags: [] as string[],
+  metaTitle: "",
+  metaDescription: "",
+  internalNotes: "",
+  occasion: [] as string[],
+  material: "",
+  ecoFriendly: false,
+  bestFor: [] as string[],
+  isLive: false,
+  showInNewArrivals: false,
+  featureOnHomepage: false,
+  enableForCampaigns: false
+};
+
+const initialVariant = {
+  id: "",
+  color: "",
+  colorHex: "#000000",
+  size: "",
+  price: "",
+  stock: "",
+  images: []
+};
+
+export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps) {
+  const [formData, setFormData] = useState(initialFormData);
   const [newFeature, setNewFeature] = useState("");
   const [newTag, setNewTag] = useState("");
-  const [currentVariant, setCurrentVariant] = useState<ProductVariant>(() => {
-    console.log("Initializing currentVariant state");
-    return {
-      id: "",
-      color: "",
-      colorHex: "#000000",
-      size: "",
-      price: "",
-      stock: "",
-      images: []
-    };
-  });
-
-  // Category Options - moved outside component to prevent recreation
-  const mainCategories = [
-    "Fashion", "Beauty & Personal Care", "Electronics", "Home & Kitchen",
-    "Sports & Outdoors", "Books & Media", "Health & Wellness", "Automotive"
-  ];
-
-  const subCategories: Record<string, string[]> = {
-    "Fashion": ["Men's Fashion", "Women's Fashion", "Kids Fashion", "Accessories"],
-    "Beauty & Personal Care": ["Skincare", "Hair Care", "Makeup", "Fragrances"],
-    "Electronics": ["Mobile & Tablets", "Computers", "Audio", "Gaming"],
-    "Home & Kitchen": ["Furniture", "Appliances", "Decor", "Kitchenware"]
-  };
-
-  const subSubCategories: Record<string, string[]> = {
-    "Men's Fashion": ["T-Shirts", "Shirts", "Jeans", "Shoes"],
-    "Women's Fashion": ["Dresses", "Tops", "Bottoms", "Footwear"],
-    "Skincare": ["Cleansers", "Moisturizers", "Serums", "Sunscreen"],
-    "Hair Care": ["Shampoo", "Conditioner", "Hair Oil", "Styling Products"]
-  };
-
-  const genderOptions = ["Men", "Women", "Unisex", "Kids", "Baby"];
-  const occasionOptions = ["Casual", "Festive", "Office", "Party", "Wedding", "Sports"];
-  const bestForOptions = ["Oily Skin", "Dry Skin", "Sensitive Skin", "All Skin Types"];
-  const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL", "Free Size"];
-  const colorOptions = [
-    { name: "Black", hex: "#000000" },
-    { name: "White", hex: "#FFFFFF" },
-    { name: "Red", hex: "#FF0000" },
-    { name: "Blue", hex: "#0000FF" },
-    { name: "Green", hex: "#008000" },
-    { name: "Yellow", hex: "#FFFF00" },
-    { name: "Pink", hex: "#FFC0CB" },
-    { name: "Purple", hex: "#800080" }
-  ];
+  const [currentVariant, setCurrentVariant] = useState<ProductVariant>(initialVariant);
 
   const addFeature = useCallback(() => {
-    console.log("addFeature called");
-    if (newFeature.trim() && formData.keyFeatures.length < 10) {
+    if (newFeature.trim()) {
       setFormData(prev => ({
         ...prev,
         keyFeatures: [...prev.keyFeatures, newFeature.trim()]
       }));
       setNewFeature("");
     }
-  }, [newFeature, formData.keyFeatures.length]);
+  }, [newFeature]);
 
   const removeFeature = useCallback((index: number) => {
-    console.log("removeFeature called with index:", index);
     setFormData(prev => ({
       ...prev,
       keyFeatures: prev.keyFeatures.filter((_, i) => i !== index)
@@ -162,7 +136,6 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, []);
 
   const addTag = useCallback(() => {
-    console.log("addTag called");
     if (newTag.trim()) {
       setFormData(prev => ({
         ...prev,
@@ -173,7 +146,6 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, [newTag]);
 
   const removeTag = useCallback((index: number) => {
-    console.log("removeTag called with index:", index);
     setFormData(prev => ({
       ...prev,
       searchTags: prev.searchTags.filter((_, i) => i !== index)
@@ -181,7 +153,6 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, []);
 
   const addVariant = useCallback(() => {
-    console.log("addVariant called");
     if (currentVariant.color && currentVariant.size) {
       const newVariant = { 
         ...currentVariant, 
@@ -191,20 +162,11 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
         ...prev,
         variants: [...prev.variants, newVariant]
       }));
-      setCurrentVariant({
-        id: "",
-        color: "",
-        colorHex: "#000000",
-        size: "",
-        price: "",
-        stock: "",
-        images: []
-      });
+      setCurrentVariant(initialVariant);
     }
   }, [currentVariant]);
 
   const removeVariant = useCallback((index: number) => {
-    console.log("removeVariant called with index:", index);
     setFormData(prev => ({
       ...prev,
       variants: prev.variants.filter((_, i) => i !== index)
@@ -212,18 +174,13 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, []);
 
   const addMainImage = useCallback(() => {
-    console.log("addMainImage called");
-    if (formData.mainImages.length < 6) {
-      const newImage = `product_image_${Date.now()}.jpg`;
-      setFormData(prev => ({
-        ...prev,
-        mainImages: [...prev.mainImages, newImage]
-      }));
-    }
-  }, [formData.mainImages.length]);
+    setFormData(prev => ({
+      ...prev,
+      mainImages: [...prev.mainImages, `product_image_${Date.now()}.jpg`]
+    }));
+  }, []);
 
   const removeMainImage = useCallback((index: number) => {
-    console.log("removeMainImage called with index:", index);
     setFormData(prev => ({
       ...prev,
       mainImages: prev.mainImages.filter((_, i) => i !== index)
@@ -231,7 +188,6 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, []);
 
   const handleSubmit = useCallback((isDraft: boolean = false) => {
-    console.log("handleSubmit called with isDraft:", isDraft);
     const submissionData = {
       ...formData,
       isDraft,
@@ -241,7 +197,6 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, [formData, onSubmit]);
 
   const handleGenderToggle = useCallback((gender: string) => {
-    console.log("handleGenderToggle called with gender:", gender);
     setFormData(prev => ({
       ...prev,
       gender: prev.gender.includes(gender)
@@ -251,7 +206,6 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, []);
 
   const handleOccasionToggle = useCallback((occasion: string) => {
-    console.log("handleOccasionToggle called with occasion:", occasion);
     setFormData(prev => ({
       ...prev,
       occasion: prev.occasion.includes(occasion)
@@ -261,7 +215,6 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, []);
 
   const handleBestForToggle = useCallback((option: string) => {
-    console.log("handleBestForToggle called with option:", option);
     setFormData(prev => ({
       ...prev,
       bestFor: prev.bestFor.includes(option)
@@ -269,51 +222,6 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
         : [...prev.bestFor, option]
     }));
   }, []);
-
-  const handleMainCategoryChange = useCallback((value: string) => {
-    console.log("handleMainCategoryChange called with value:", value);
-    setFormData(prev => ({ 
-      ...prev, 
-      mainCategory: value, 
-      subCategory: "", 
-      subSubCategory: "" 
-    }));
-  }, []);
-
-  const handleSubCategoryChange = useCallback((value: string) => {
-    console.log("handleSubCategoryChange called with value:", value);
-    setFormData(prev => ({ 
-      ...prev, 
-      subCategory: value, 
-      subSubCategory: "" 
-    }));
-  }, []);
-
-  const handleSubSubCategoryChange = useCallback((value: string) => {
-    console.log("handleSubSubCategoryChange called with value:", value);
-    setFormData(prev => ({ 
-      ...prev, 
-      subSubCategory: value 
-    }));
-  }, []);
-
-  const handleVariantColorChange = useCallback((value: string) => {
-    console.log("handleVariantColorChange called with value:", value);
-    const selectedColor = colorOptions.find(c => c.name === value);
-    setCurrentVariant(prev => ({ 
-      ...prev, 
-      color: value,
-      colorHex: selectedColor?.hex || "#000000"
-    }));
-  }, []);
-
-  const handleVariantSizeChange = useCallback((value: string) => {
-    console.log("handleVariantSizeChange called with value:", value);
-    setCurrentVariant(prev => ({ ...prev, size: value }));
-  }, []);
-
-  const discountPercentage = formData.mrp && formData.sellingPrice ? 
-    Math.round(((parseFloat(formData.mrp) - parseFloat(formData.sellingPrice)) / parseFloat(formData.mrp)) * 100) : 0;
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -326,7 +234,15 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
           <div className="grid md:grid-cols-3 gap-4">
             <div>
               <Label>Main Category *</Label>
-              <Select value={formData.mainCategory} onValueChange={handleMainCategoryChange}>
+              <Select 
+                value={formData.mainCategory} 
+                onValueChange={(value) => setFormData(prev => ({ 
+                  ...prev, 
+                  mainCategory: value, 
+                  subCategory: "", 
+                  subSubCategory: "" 
+                }))}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select main category" />
                 </SelectTrigger>
@@ -342,7 +258,11 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
               <Label>Sub-Category *</Label>
               <Select 
                 value={formData.subCategory} 
-                onValueChange={handleSubCategoryChange}
+                onValueChange={(value) => setFormData(prev => ({ 
+                  ...prev, 
+                  subCategory: value, 
+                  subSubCategory: "" 
+                }))}
                 disabled={!formData.mainCategory}
               >
                 <SelectTrigger>
@@ -360,7 +280,10 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
               <Label>Sub-Sub Category *</Label>
               <Select 
                 value={formData.subSubCategory} 
-                onValueChange={handleSubSubCategoryChange}
+                onValueChange={(value) => setFormData(prev => ({ 
+                  ...prev, 
+                  subSubCategory: value 
+                }))}
                 disabled={!formData.subCategory}
               >
                 <SelectTrigger>
@@ -532,7 +455,17 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
           <div className="grid md:grid-cols-5 gap-4 p-4 border rounded-lg">
             <div>
               <Label>Color</Label>
-              <Select value={currentVariant.color} onValueChange={handleVariantColorChange}>
+              <Select 
+                value={currentVariant.color} 
+                onValueChange={(value) => {
+                  const selectedColor = colorOptions.find(c => c.name === value);
+                  setCurrentVariant(prev => ({ 
+                    ...prev, 
+                    color: value,
+                    colorHex: selectedColor?.hex || "#000000"
+                  }));
+                }}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select color" />
                 </SelectTrigger>
@@ -551,7 +484,10 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
 
             <div>
               <Label>Size</Label>
-              <Select value={currentVariant.size} onValueChange={handleVariantSizeChange}>
+              <Select 
+                value={currentVariant.size} 
+                onValueChange={(value) => setCurrentVariant(prev => ({ ...prev, size: value }))}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select size" />
                 </SelectTrigger>
