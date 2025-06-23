@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -226,6 +225,33 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   const discountPercentage = formData.mrp && formData.sellingPrice ? 
     Math.round(((parseFloat(formData.mrp) - parseFloat(formData.sellingPrice)) / parseFloat(formData.mrp)) * 100) : 0;
 
+  const handleGenderToggle = useCallback((gender: string) => {
+    setFormData(prev => ({
+      ...prev,
+      gender: prev.gender.includes(gender)
+        ? prev.gender.filter(g => g !== gender)
+        : [...prev.gender, gender]
+    }));
+  }, []);
+
+  const handleOccasionToggle = useCallback((occasion: string) => {
+    setFormData(prev => ({
+      ...prev,
+      occasion: prev.occasion.includes(occasion)
+        ? prev.occasion.filter(o => o !== occasion)
+        : [...prev.occasion, occasion]
+    }));
+  }, []);
+
+  const handleBestForToggle = useCallback((option: string) => {
+    setFormData(prev => ({
+      ...prev,
+      bestFor: prev.bestFor.includes(option)
+        ? prev.bestFor.filter(b => b !== option)
+        : [...prev.bestFor, option]
+    }));
+  }, []);
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Category Selection */}
@@ -349,14 +375,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
                   key={gender}
                   variant={formData.gender.includes(gender) ? "default" : "outline"}
                   className="cursor-pointer"
-                  onClick={() => {
-                    setFormData(prev => ({
-                      ...prev,
-                      gender: prev.gender.includes(gender)
-                        ? prev.gender.filter(g => g !== gender)
-                        : [...prev.gender, gender]
-                    }));
-                  }}
+                  onClick={() => handleGenderToggle(gender)}
                 >
                   {gender}
                 </Badge>
@@ -670,14 +689,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
                   key={occasion}
                   variant={formData.occasion.includes(occasion) ? "default" : "outline"}
                   className="cursor-pointer"
-                  onClick={() => {
-                    setFormData(prev => ({
-                      ...prev,
-                      occasion: prev.occasion.includes(occasion)
-                        ? prev.occasion.filter(o => o !== occasion)
-                        : [...prev.occasion, occasion]
-                    }));
-                  }}
+                  onClick={() => handleOccasionToggle(occasion)}
                 >
                   {occasion}
                 </Badge>
@@ -693,14 +705,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
                   key={option}
                   variant={formData.bestFor.includes(option) ? "default" : "outline"}
                   className="cursor-pointer"
-                  onClick={() => {
-                    setFormData(prev => ({
-                      ...prev,
-                      bestFor: prev.bestFor.includes(option)
-                        ? prev.bestFor.filter(b => b !== option)
-                        : [...prev.bestFor, option]
-                    }));
-                  }}
+                  onClick={() => handleBestForToggle(option)}
                 >
                   {option}
                 </Badge>
