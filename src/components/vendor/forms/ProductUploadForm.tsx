@@ -252,6 +252,43 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
     }));
   }, []);
 
+  const handleMainCategoryChange = useCallback((value: string) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      mainCategory: value, 
+      subCategory: "", 
+      subSubCategory: "" 
+    }));
+  }, []);
+
+  const handleSubCategoryChange = useCallback((value: string) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      subCategory: value, 
+      subSubCategory: "" 
+    }));
+  }, []);
+
+  const handleSubSubCategoryChange = useCallback((value: string) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      subSubCategory: value 
+    }));
+  }, []);
+
+  const handleVariantColorChange = useCallback((value: string) => {
+    const selectedColor = colorOptions.find(c => c.name === value);
+    setCurrentVariant(prev => ({ 
+      ...prev, 
+      color: value,
+      colorHex: selectedColor?.hex || "#000000"
+    }));
+  }, []);
+
+  const handleVariantSizeChange = useCallback((value: string) => {
+    setCurrentVariant(prev => ({ ...prev, size: value }));
+  }, []);
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Category Selection */}
@@ -263,7 +300,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
           <div className="grid md:grid-cols-3 gap-4">
             <div>
               <Label>Main Category *</Label>
-              <Select value={formData.mainCategory} onValueChange={(value) => setFormData(prev => ({ ...prev, mainCategory: value, subCategory: "", subSubCategory: "" }))}>
+              <Select value={formData.mainCategory} onValueChange={handleMainCategoryChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select main category" />
                 </SelectTrigger>
@@ -279,7 +316,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
               <Label>Sub-Category *</Label>
               <Select 
                 value={formData.subCategory} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, subCategory: value, subSubCategory: "" }))}
+                onValueChange={handleSubCategoryChange}
                 disabled={!formData.mainCategory}
               >
                 <SelectTrigger>
@@ -297,7 +334,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
               <Label>Sub-Sub Category *</Label>
               <Select 
                 value={formData.subSubCategory} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, subSubCategory: value }))}
+                onValueChange={handleSubSubCategoryChange}
                 disabled={!formData.subCategory}
               >
                 <SelectTrigger>
@@ -469,14 +506,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
           <div className="grid md:grid-cols-5 gap-4 p-4 border rounded-lg">
             <div>
               <Label>Color</Label>
-              <Select value={currentVariant.color} onValueChange={(value) => {
-                const selectedColor = colorOptions.find(c => c.name === value);
-                setCurrentVariant(prev => ({ 
-                  ...prev, 
-                  color: value,
-                  colorHex: selectedColor?.hex || "#000000"
-                }));
-              }}>
+              <Select value={currentVariant.color} onValueChange={handleVariantColorChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select color" />
                 </SelectTrigger>
@@ -495,7 +525,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
 
             <div>
               <Label>Size</Label>
-              <Select value={currentVariant.size} onValueChange={(value) => setCurrentVariant(prev => ({ ...prev, size: value }))}>
+              <Select value={currentVariant.size} onValueChange={handleVariantSizeChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select size" />
                 </SelectTrigger>
