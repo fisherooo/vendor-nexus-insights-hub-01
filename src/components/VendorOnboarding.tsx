@@ -23,13 +23,20 @@ interface VendorOnboardingProps {
   onBack: () => void;
 }
 
+interface Step {
+  id: number;
+  title: string;
+  description: string;
+  component: React.ComponentType<any>;
+}
+
 const VendorOnboarding = ({ onBack }: VendorOnboardingProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
-  const [vendorData, setVendorData] = useState({});
+  const [vendorData, setVendorData] = useState<Record<number, any>>({});
   const { toast } = useToast();
 
-  const steps = [
+  const steps: Step[] = [
     {
       id: 0,
       title: "Business Information",
