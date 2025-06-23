@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,79 +27,87 @@ interface ProductUploadFormProps {
 }
 
 export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps) {
-  const [formData, setFormData] = useState({
-    // Category Selection
-    mainCategory: "",
-    subCategory: "",
-    subSubCategory: "",
-    
-    // Product Core Info
-    title: "",
-    subtitle: "",
-    brandName: "",
-    hsnCode: "",
-    modelNumber: "",
-    gender: [] as string[],
-    
-    // Description & Highlights
-    description: "",
-    keyFeatures: [] as string[],
-    howToUse: "",
-    ingredients: "",
-    
-    // Variants
-    variants: [] as ProductVariant[],
-    
-    // Images & Media
-    mainImages: [] as string[],
-    videoUrl: "",
-    
-    // Pricing & Inventory
-    mrp: "",
-    sellingPrice: "",
-    taxClass: "",
-    lowStockAlert: "",
-    
-    // Shipping & Packaging
-    dimensions: { length: "", width: "", height: "" },
-    weight: "",
-    packType: "",
-    dispatchTime: "",
-    returnPolicy: "",
-    codAvailable: false,
-    
-    // SEO
-    searchTags: [] as string[],
-    metaTitle: "",
-    metaDescription: "",
-    internalNotes: "",
-    
-    // Filters
-    occasion: [] as string[],
-    material: "",
-    ecoFriendly: false,
-    bestFor: [] as string[],
-    
-    // Visibility
-    isLive: false,
-    showInNewArrivals: false,
-    featureOnHomepage: false,
-    enableForCampaigns: false
+  console.log("ProductUploadForm rendering");
+  
+  const [formData, setFormData] = useState(() => {
+    console.log("Initializing formData state");
+    return {
+      // Category Selection
+      mainCategory: "",
+      subCategory: "",
+      subSubCategory: "",
+      
+      // Product Core Info
+      title: "",
+      subtitle: "",
+      brandName: "",
+      hsnCode: "",
+      modelNumber: "",
+      gender: [] as string[],
+      
+      // Description & Highlights
+      description: "",
+      keyFeatures: [] as string[],
+      howToUse: "",
+      ingredients: "",
+      
+      // Variants
+      variants: [] as ProductVariant[],
+      
+      // Images & Media
+      mainImages: [] as string[],
+      videoUrl: "",
+      
+      // Pricing & Inventory
+      mrp: "",
+      sellingPrice: "",
+      taxClass: "",
+      lowStockAlert: "",
+      
+      // Shipping & Packaging
+      dimensions: { length: "", width: "", height: "" },
+      weight: "",
+      packType: "",
+      dispatchTime: "",
+      returnPolicy: "",
+      codAvailable: false,
+      
+      // SEO
+      searchTags: [] as string[],
+      metaTitle: "",
+      metaDescription: "",
+      internalNotes: "",
+      
+      // Filters
+      occasion: [] as string[],
+      material: "",
+      ecoFriendly: false,
+      bestFor: [] as string[],
+      
+      // Visibility
+      isLive: false,
+      showInNewArrivals: false,
+      featureOnHomepage: false,
+      enableForCampaigns: false
+    };
   });
 
   const [newFeature, setNewFeature] = useState("");
   const [newTag, setNewTag] = useState("");
-  const [currentVariant, setCurrentVariant] = useState<ProductVariant>({
-    id: "",
-    color: "",
-    colorHex: "#000000",
-    size: "",
-    price: "",
-    stock: "",
-    images: []
+  const [currentVariant, setCurrentVariant] = useState<ProductVariant>(() => {
+    console.log("Initializing currentVariant state");
+    return {
+      id: "",
+      color: "",
+      colorHex: "#000000",
+      size: "",
+      price: "",
+      stock: "",
+      images: []
+    };
   });
 
-  // Category Options
+  // Category Options - moved outside component to prevent recreation
   const mainCategories = [
     "Fashion", "Beauty & Personal Care", "Electronics", "Home & Kitchen",
     "Sports & Outdoors", "Books & Media", "Health & Wellness", "Automotive"
@@ -133,7 +142,8 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
     { name: "Purple", hex: "#800080" }
   ];
 
-  const addFeature = () => {
+  const addFeature = useCallback(() => {
+    console.log("addFeature called");
     if (newFeature.trim() && formData.keyFeatures.length < 10) {
       setFormData(prev => ({
         ...prev,
@@ -141,16 +151,18 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
       }));
       setNewFeature("");
     }
-  };
+  }, [newFeature, formData.keyFeatures.length]);
 
-  const removeFeature = (index: number) => {
+  const removeFeature = useCallback((index: number) => {
+    console.log("removeFeature called with index:", index);
     setFormData(prev => ({
       ...prev,
       keyFeatures: prev.keyFeatures.filter((_, i) => i !== index)
     }));
-  };
+  }, []);
 
-  const addTag = () => {
+  const addTag = useCallback(() => {
+    console.log("addTag called");
     if (newTag.trim()) {
       setFormData(prev => ({
         ...prev,
@@ -158,20 +170,22 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
       }));
       setNewTag("");
     }
-  };
+  }, [newTag]);
 
-  const removeTag = (index: number) => {
+  const removeTag = useCallback((index: number) => {
+    console.log("removeTag called with index:", index);
     setFormData(prev => ({
       ...prev,
       searchTags: prev.searchTags.filter((_, i) => i !== index)
     }));
-  };
+  }, []);
 
-  const addVariant = () => {
+  const addVariant = useCallback(() => {
+    console.log("addVariant called");
     if (currentVariant.color && currentVariant.size) {
       const newVariant = { 
         ...currentVariant, 
-        id: Date.now().toString() 
+        id: `variant-${Date.now()}` 
       };
       setFormData(prev => ({
         ...prev,
@@ -187,16 +201,18 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
         images: []
       });
     }
-  };
+  }, [currentVariant]);
 
-  const removeVariant = (index: number) => {
+  const removeVariant = useCallback((index: number) => {
+    console.log("removeVariant called with index:", index);
     setFormData(prev => ({
       ...prev,
       variants: prev.variants.filter((_, i) => i !== index)
     }));
-  };
+  }, []);
 
-  const addMainImage = () => {
+  const addMainImage = useCallback(() => {
+    console.log("addMainImage called");
     if (formData.mainImages.length < 6) {
       const newImage = `product_image_${Date.now()}.jpg`;
       setFormData(prev => ({
@@ -204,28 +220,28 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
         mainImages: [...prev.mainImages, newImage]
       }));
     }
-  };
+  }, [formData.mainImages.length]);
 
-  const removeMainImage = (index: number) => {
+  const removeMainImage = useCallback((index: number) => {
+    console.log("removeMainImage called with index:", index);
     setFormData(prev => ({
       ...prev,
       mainImages: prev.mainImages.filter((_, i) => i !== index)
     }));
-  };
+  }, []);
 
-  const handleSubmit = (isDraft: boolean = false) => {
+  const handleSubmit = useCallback((isDraft: boolean = false) => {
+    console.log("handleSubmit called with isDraft:", isDraft);
     const submissionData = {
       ...formData,
       isDraft,
       submittedAt: new Date().toISOString()
     };
     onSubmit(submissionData);
-  };
-
-  const discountPercentage = formData.mrp && formData.sellingPrice ? 
-    Math.round(((parseFloat(formData.mrp) - parseFloat(formData.sellingPrice)) / parseFloat(formData.mrp)) * 100) : 0;
+  }, [formData, onSubmit]);
 
   const handleGenderToggle = useCallback((gender: string) => {
+    console.log("handleGenderToggle called with gender:", gender);
     setFormData(prev => ({
       ...prev,
       gender: prev.gender.includes(gender)
@@ -235,6 +251,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, []);
 
   const handleOccasionToggle = useCallback((occasion: string) => {
+    console.log("handleOccasionToggle called with occasion:", occasion);
     setFormData(prev => ({
       ...prev,
       occasion: prev.occasion.includes(occasion)
@@ -244,6 +261,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, []);
 
   const handleBestForToggle = useCallback((option: string) => {
+    console.log("handleBestForToggle called with option:", option);
     setFormData(prev => ({
       ...prev,
       bestFor: prev.bestFor.includes(option)
@@ -253,6 +271,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, []);
 
   const handleMainCategoryChange = useCallback((value: string) => {
+    console.log("handleMainCategoryChange called with value:", value);
     setFormData(prev => ({ 
       ...prev, 
       mainCategory: value, 
@@ -262,6 +281,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, []);
 
   const handleSubCategoryChange = useCallback((value: string) => {
+    console.log("handleSubCategoryChange called with value:", value);
     setFormData(prev => ({ 
       ...prev, 
       subCategory: value, 
@@ -270,6 +290,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, []);
 
   const handleSubSubCategoryChange = useCallback((value: string) => {
+    console.log("handleSubSubCategoryChange called with value:", value);
     setFormData(prev => ({ 
       ...prev, 
       subSubCategory: value 
@@ -277,6 +298,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, []);
 
   const handleVariantColorChange = useCallback((value: string) => {
+    console.log("handleVariantColorChange called with value:", value);
     const selectedColor = colorOptions.find(c => c.name === value);
     setCurrentVariant(prev => ({ 
       ...prev, 
@@ -286,8 +308,12 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
   }, []);
 
   const handleVariantSizeChange = useCallback((value: string) => {
+    console.log("handleVariantSizeChange called with value:", value);
     setCurrentVariant(prev => ({ ...prev, size: value }));
   }, []);
+
+  const discountPercentage = formData.mrp && formData.sellingPrice ? 
+    Math.round(((parseFloat(formData.mrp) - parseFloat(formData.sellingPrice)) / parseFloat(formData.mrp)) * 100) : 0;
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -569,7 +595,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
             <div className="space-y-2">
               <Label>Added Variants:</Label>
               {formData.variants.map((variant, index) => (
-                <div key={variant.id || `variant-${index}`} className="flex items-center justify-between p-3 border rounded-lg">
+                <div key={variant.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center space-x-4">
                     <div className="w-6 h-6 rounded-full border" style={{ backgroundColor: variant.colorHex }} />
                     <span>{variant.color} - {variant.size}</span>
@@ -639,8 +665,6 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
         </CardContent>
       </Card>
 
-      {/* Continue with remaining sections... */}
-      
       {/* SEO & Search Optimization */}
       <Card>
         <CardHeader>
