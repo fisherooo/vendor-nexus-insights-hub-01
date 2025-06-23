@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { X, Plus, Upload, Image, Eye, Save, Send } from "lucide-react";
+import categoriesData from "@/data/categories.json";
 
 interface ProductVariant {
   id: string;
@@ -27,25 +27,6 @@ interface ProductUploadFormProps {
 }
 
 // Move ALL static data outside component to prevent recreation
-const mainCategories = [
-  "Fashion", "Beauty & Personal Care", "Electronics", "Home & Kitchen",
-  "Sports & Outdoors", "Books & Media", "Health & Wellness", "Automotive"
-];
-
-const subCategories: Record<string, string[]> = {
-  "Fashion": ["Men's Fashion", "Women's Fashion", "Kids Fashion", "Accessories"],
-  "Beauty & Personal Care": ["Skincare", "Hair Care", "Makeup", "Fragrances"],
-  "Electronics": ["Mobile & Tablets", "Computers", "Audio", "Gaming"],
-  "Home & Kitchen": ["Furniture", "Appliances", "Decor", "Kitchenware"]
-};
-
-const subSubCategories: Record<string, string[]> = {
-  "Men's Fashion": ["T-Shirts", "Shirts", "Jeans", "Shoes"],
-  "Women's Fashion": ["Dresses", "Tops", "Bottoms", "Footwear"],
-  "Skincare": ["Cleansers", "Moisturizers", "Serums", "Sunscreen"],
-  "Hair Care": ["Shampoo", "Conditioner", "Hair Oil", "Styling Products"]
-};
-
 const genderOptions = ["Men", "Women", "Unisex", "Kids", "Baby"];
 const occasionOptions = ["Casual", "Festive", "Office", "Party", "Wedding", "Sports"];
 const bestForOptions = ["Oily Skin", "Dry Skin", "Sensitive Skin", "All Skin Types"];
@@ -61,62 +42,78 @@ const colorOptions = [
   { name: "Purple", hex: "#800080" }
 ];
 
-const initialFormData = {
-  mainCategory: "",
-  subCategory: "",
-  subSubCategory: "",
-  title: "",
-  subtitle: "",
-  brandName: "",
-  hsnCode: "",
-  modelNumber: "",
-  gender: [] as string[],
-  description: "",
-  keyFeatures: [] as string[],
-  howToUse: "",
-  ingredients: "",
-  variants: [] as ProductVariant[],
-  mainImages: [] as string[],
-  videoUrl: "",
-  mrp: "",
-  sellingPrice: "",
-  taxClass: "",
-  lowStockAlert: "",
-  dimensions: { length: "", width: "", height: "" },
-  weight: "",
-  packType: "",
-  dispatchTime: "",
-  returnPolicy: "",
-  codAvailable: false,
-  searchTags: [] as string[],
-  metaTitle: "",
-  metaDescription: "",
-  internalNotes: "",
-  occasion: [] as string[],
-  material: "",
-  ecoFriendly: false,
-  bestFor: [] as string[],
-  isLive: false,
-  showInNewArrivals: false,
-  featureOnHomepage: false,
-  enableForCampaigns: false
-};
-
-const initialVariant = {
-  id: "",
-  color: "",
-  colorHex: "#000000",
-  size: "",
-  price: "",
-  stock: "",
-  images: []
-};
+// Get categories from JSON data
+const mainCategories = Object.keys(categoriesData);
 
 export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps) {
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState(() => ({
+    mainCategory: "",
+    subCategory: "",
+    subSubCategory: "",
+    title: "",
+    subtitle: "",
+    brandName: "",
+    hsnCode: "",
+    modelNumber: "",
+    gender: [] as string[],
+    description: "",
+    keyFeatures: [] as string[],
+    howToUse: "",
+    ingredients: "",
+    variants: [] as ProductVariant[],
+    mainImages: [] as string[],
+    videoUrl: "",
+    mrp: "",
+    sellingPrice: "",
+    taxClass: "",
+    lowStockAlert: "",
+    dimensions: { length: "", width: "", height: "" },
+    weight: "",
+    packType: "",
+    dispatchTime: "",
+    returnPolicy: "",
+    codAvailable: false,
+    searchTags: [] as string[],
+    metaTitle: "",
+    metaDescription: "",
+    internalNotes: "",
+    occasion: [] as string[],
+    material: "",
+    ecoFriendly: false,
+    bestFor: [] as string[],
+    isLive: false,
+    showInNewArrivals: false,
+    featureOnHomepage: false,
+    enableForCampaigns: false
+  }));
+
   const [newFeature, setNewFeature] = useState("");
   const [newTag, setNewTag] = useState("");
-  const [currentVariant, setCurrentVariant] = useState<ProductVariant>(initialVariant);
+  const [currentVariant, setCurrentVariant] = useState<ProductVariant>({
+    id: "",
+    color: "",
+    colorHex: "#000000",
+    size: "",
+    price: "",
+    stock: "",
+    images: []
+  });
+
+  console.log("ProductUploadForm rendered", { formDataTitle: formData.title });
+
+  // Get available sub-categories based on selected main category
+  const getSubCategories = () => {
+    if (!formData.mainCategory) return [];
+    return Object.keys(categoriesData[formData.mainCategory as keyof typeof categoriesData] || {});
+  };
+
+  // Get available sub-sub categories based on selected sub-category
+  const getSubSubCategories = () => {
+    if (!formData.mainCategory || !formData.subCategory) return [];
+    const mainCat = categoriesData[formData.mainCategory as keyof typeof categoriesData];
+    if (!mainCat) return [];
+    return mainCat[formData.subCategory as keyof typeof mainCat] || [];
+  };
 
   const addFeature = useCallback(() => {
     if (newFeature.trim()) {
@@ -162,7 +159,15 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
         ...prev,
         variants: [...prev.variants, newVariant]
       }));
-      setCurrentVariant(initialVariant);
+      setCurrentVariant({
+        id: "",
+        color: "",
+        colorHex: "#000000",
+        size: "",
+        price: "",
+        stock: "",
+        images: []
+      });
     }
   }, [currentVariant]);
 
@@ -269,7 +274,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
                   <SelectValue placeholder="Select sub-category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {formData.mainCategory && subCategories[formData.mainCategory]?.map((category) => (
+                  {getSubCategories().map((category) => (
                     <SelectItem key={category} value={category}>{category}</SelectItem>
                   ))}
                 </SelectContent>
@@ -290,7 +295,7 @@ export function ProductUploadForm({ onSubmit, onCancel }: ProductUploadFormProps
                   <SelectValue placeholder="Select sub-sub category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {formData.subCategory && subSubCategories[formData.subCategory]?.map((category) => (
+                  {getSubSubCategories().map((category) => (
                     <SelectItem key={category} value={category}>{category}</SelectItem>
                   ))}
                 </SelectContent>
