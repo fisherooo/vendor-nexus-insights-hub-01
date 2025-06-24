@@ -17,11 +17,11 @@ import {
 } from "lucide-react";
 import VendorOnboarding from "@/components/VendorOnboarding";
 import VendorDashboard from "@/components/VendorDashboard";
-import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<"home" | "onboarding" | "dashboard">("home");
-  const navigate = useNavigate();
+
+  console.log("Current view:", currentView);
 
   if (currentView === "onboarding") {
     return <VendorOnboarding onBack={() => setCurrentView("home")} />;
@@ -47,10 +47,16 @@ const Index = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="outline" onClick={() => setCurrentView("dashboard")}>
+              <Button variant="outline" onClick={() => {
+                console.log("Dashboard button clicked");
+                setCurrentView("dashboard");
+              }}>
                 Vendor Dashboard
               </Button>
-              <Button onClick={() => setCurrentView("onboarding")}>
+              <Button onClick={() => {
+                console.log("Registration button clicked");
+                setCurrentView("onboarding");
+              }}>
                 Register as Vendor
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -74,11 +80,17 @@ const Index = () => {
               inventory tracking, and team collaboration tools.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" onClick={() => setCurrentView("onboarding")} className="text-lg px-8 py-6">
+              <Button size="lg" onClick={() => {
+                console.log("Hero registration button clicked");
+                setCurrentView("onboarding");
+              }} className="text-lg px-8 py-6">
                 Start Vendor Registration
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
-              <Button size="lg" variant="outline" onClick={() => setCurrentView("dashboard")} className="text-lg px-8 py-6">
+              <Button size="lg" variant="outline" onClick={() => {
+                console.log("Hero dashboard button clicked");
+                setCurrentView("dashboard");
+              }} className="text-lg px-8 py-6">
                 View Dashboard Demo
               </Button>
             </div>
