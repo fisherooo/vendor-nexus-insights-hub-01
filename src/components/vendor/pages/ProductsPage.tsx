@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Plus, Edit, Trash2, Eye, Star, Package, AlertTriangle, Search, Filter, TrendingUp, Clock, DollarSign } from "lucide-react";
-import { ProductUploadForm } from "@/components/vendor/forms/ProductUploadForm";
+import { ProductForm } from "@/components/vendor/forms/ProductForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -107,15 +108,10 @@ export function ProductsPage() {
   const handleAddProduct = (productData: any) => {
     const newProduct: Product = {
       id: Date.now().toString(),
-      name: productData.title || "New Product",
-      description: productData.description || "",
-      price: parseFloat(productData.sellingPrice || "0"),
-      category: productData.subSubCategory || productData.subCategory || productData.mainCategory || "Other",
-      stock: productData.variants.reduce((total: number, variant: any) => total + parseInt(variant.stock || "0"), 0) || 0,
-      images: productData.mainImages || [],
+      ...productData,
       rating: 0,
       sales: 0,
-      status: productData.isLive ? "active" : "draft",
+      status: "active",
       createdDate: new Date().toISOString().split('T')[0],
       views: 0
     };
@@ -179,11 +175,12 @@ export function ProductsPage() {
               Add Product
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingProduct ? "Edit Product" : "Add New Product"}</DialogTitle>
             </DialogHeader>
-            <ProductUploadForm
+            <ProductForm
+              product={editingProduct}
               onSubmit={handleAddProduct}
               onCancel={() => setIsFormOpen(false)}
             />
