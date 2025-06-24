@@ -16,18 +16,33 @@ import {
 } from "lucide-react";
 import VendorOnboarding from "@/components/VendorOnboarding";
 import VendorDashboard from "@/components/VendorDashboard";
-import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<"home" | "onboarding" | "dashboard">("home");
-  const navigate = useNavigate();
+
+  console.log("Current view:", currentView);
+
+  const handleVendorRegistration = () => {
+    console.log("Hero registration button clicked");
+    setCurrentView("onboarding");
+  };
+
+  const handleDashboardView = () => {
+    console.log("Dashboard button clicked");
+    setCurrentView("dashboard");
+  };
+
+  const handleBackToHome = () => {
+    console.log("Back to home clicked");
+    setCurrentView("home");
+  };
 
   if (currentView === "onboarding") {
-    return <VendorOnboarding onBack={() => setCurrentView("home")} />;
+    return <VendorOnboarding onBack={handleBackToHome} />;
   }
 
   if (currentView === "dashboard") {
-    return <VendorDashboard onBack={() => setCurrentView("home")} />;
+    return <VendorDashboard onBack={handleBackToHome} />;
   }
 
   return (
@@ -46,10 +61,10 @@ const Index = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="outline" onClick={() => setCurrentView("dashboard")}>
+              <Button variant="outline" onClick={handleDashboardView}>
                 Vendor Dashboard
               </Button>
-              <Button onClick={() => setCurrentView("onboarding")}>
+              <Button onClick={handleVendorRegistration}>
                 Register as Vendor
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -73,11 +88,11 @@ const Index = () => {
               inventory tracking, and team collaboration tools.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" onClick={() => setCurrentView("onboarding")} className="text-lg px-8 py-6">
+              <Button size="lg" onClick={handleVendorRegistration} className="text-lg px-8 py-6">
                 Start Vendor Registration
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
-              <Button size="lg" variant="outline" onClick={() => setCurrentView("dashboard")} className="text-lg px-8 py-6">
+              <Button size="lg" variant="outline" onClick={handleDashboardView} className="text-lg px-8 py-6">
                 View Dashboard Demo
               </Button>
             </div>
@@ -252,7 +267,7 @@ const Index = () => {
             <Button 
               size="lg" 
               variant="secondary" 
-              onClick={() => setCurrentView("onboarding")}
+              onClick={handleVendorRegistration}
               className="text-lg px-8 py-6 bg-white text-primary hover:bg-gray-100"
             >
               Begin Vendor Registration
