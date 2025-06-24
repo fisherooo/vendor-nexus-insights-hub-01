@@ -39,12 +39,12 @@ const VendorDashboard = ({ onBack }: VendorDashboardProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50/30">
       <SidebarProvider>
         <div className="flex min-h-screen w-full">
           <VendorSidebar currentPage={currentPage} onPageChange={setCurrentPage} />
           <div className="flex-1 flex flex-col">
-            <main className="flex-1 p-6 bg-white/30 backdrop-blur-sm">
+            <main className="flex-1 p-6 bg-gradient-to-br from-white/40 via-gray-50/30 to-blue-50/20 backdrop-blur-sm">
               <div className="max-w-7xl mx-auto">
                 {renderCurrentPage()}
               </div>
