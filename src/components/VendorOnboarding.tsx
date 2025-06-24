@@ -23,13 +23,20 @@ interface VendorOnboardingProps {
   onBack: () => void;
 }
 
+interface Step {
+  id: number;
+  title: string;
+  description: string;
+  component: React.ComponentType<any>;
+}
+
 const VendorOnboarding = ({ onBack }: VendorOnboardingProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
-  const [vendorData, setVendorData] = useState({});
+  const [vendorData, setVendorData] = useState<Record<number, any>>({});
   const { toast } = useToast();
 
-  const steps = [
+  const steps: Step[] = [
     {
       id: 0,
       title: "Business Information",
@@ -99,7 +106,6 @@ const VendorOnboarding = ({ onBack }: VendorOnboardingProps) => {
   ];
 
   const currentStepData = steps[currentStep];
-  const CurrentStepComponent = currentStepData.component;
   const progress = ((currentStep + 1) / steps.length) * 100;
 
   const handleNext = () => {
@@ -131,6 +137,29 @@ const VendorOnboarding = ({ onBack }: VendorOnboardingProps) => {
       title: "Application Submitted Successfully!",
       description: "Your vendor application has been submitted for review. We'll contact you within 24-48 hours.",
     });
+  };
+
+  // Error boundary fallback for step components
+  const renderStepComponent = () => {
+    try {
+      const CurrentStepComponent = currentStepData.component;
+      return (
+        <CurrentStepComponent 
+          data={vendorData[currentStep] || {}}
+          onDataUpdate={handleDataUpdate}
+        />
+      );
+    } catch (error) {
+      console.error("Error rendering step component:", error);
+      return (
+        <div className="p-8 text-center">
+          <p className="text-red-600 mb-4">There was an error loading this step.</p>
+          <Button onClick={() => window.location.reload()}>
+            Reload Page
+          </Button>
+        </div>
+      );
+    }
   };
 
   return (
@@ -225,10 +254,7 @@ const VendorOnboarding = ({ onBack }: VendorOnboardingProps) => {
                   <CardDescription className="text-lg">{currentStepData.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <CurrentStepComponent 
-                    data={vendorData[currentStep] || {}}
-                    onDataUpdate={handleDataUpdate}
-                  />
+                  {renderStepComponent()}
                   
                   {/* Navigation Buttons */}
                   <div className="flex justify-between mt-8 pt-6 border-t">
