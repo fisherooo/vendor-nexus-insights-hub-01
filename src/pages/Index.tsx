@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,9 +32,9 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white/90 backdrop-blur-sm border-b border-green-100 sticky top-0 z-50">
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -59,7 +60,7 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="py-20">
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto">
             <Badge variant="secondary" className="mb-4 bg-primary/10 text-primary">
@@ -86,7 +87,7 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-white/50">
+      <section id="features" className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -100,7 +101,7 @@ const Index = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Product Management */}
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="border shadow-sm hover:shadow-md transition-shadow bg-white">
               <CardHeader>
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                   <Package className="w-6 h-6 text-primary" />
@@ -114,7 +115,7 @@ const Index = () => {
             </Card>
 
             {/* Analytics & Sales */}
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="border shadow-sm hover:shadow-md transition-shadow bg-white">
               <CardHeader>
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                   <BarChart3 className="w-6 h-6 text-primary" />
@@ -128,7 +129,7 @@ const Index = () => {
             </Card>
 
             {/* Team Management */}
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="border shadow-sm hover:shadow-md transition-shadow bg-white">
               <CardHeader>
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                   <Users className="w-6 h-6 text-primary" />
@@ -142,7 +143,7 @@ const Index = () => {
             </Card>
 
             {/* Inventory Management */}
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="border shadow-sm hover:shadow-md transition-shadow bg-white">
               <CardHeader>
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                   <ShoppingCart className="w-6 h-6 text-primary" />
@@ -156,7 +157,7 @@ const Index = () => {
             </Card>
 
             {/* Shop Customization */}
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="border shadow-sm hover:shadow-md transition-shadow bg-white">
               <CardHeader>
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                   <Store className="w-6 h-6 text-primary" />
@@ -170,7 +171,7 @@ const Index = () => {
             </Card>
 
             {/* Secure Platform */}
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="border shadow-sm hover:shadow-md transition-shadow bg-white">
               <CardHeader>
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                   <Shield className="w-6 h-6 text-primary" />
@@ -187,7 +188,7 @@ const Index = () => {
       </section>
 
       {/* Dashboard Preview */}
-      <section className="py-20">
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -198,7 +199,7 @@ const Index = () => {
             </p>
           </div>
 
-          <Card className="max-w-4xl mx-auto border-0 shadow-2xl">
+          <Card className="max-w-4xl mx-auto border shadow-lg bg-white">
             <CardContent className="p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="text-center">

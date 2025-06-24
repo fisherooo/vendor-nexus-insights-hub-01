@@ -163,9 +163,9 @@ const VendorOnboarding = ({ onBack }: VendorOnboardingProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-green-100 sticky top-0 z-50">
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Button 
@@ -199,7 +199,7 @@ const VendorOnboarding = ({ onBack }: VendorOnboardingProps) => {
           <div className="grid lg:grid-cols-4 gap-8">
             {/* Step Navigation */}
             <div className="lg:col-span-1">
-              <Card className="sticky top-24">
+              <Card className="sticky top-24 bg-white shadow-sm">
                 <CardHeader>
                   <CardTitle className="text-lg">Registration Steps</CardTitle>
                   <CardDescription>Complete all steps to submit your application</CardDescription>
@@ -248,7 +248,7 @@ const VendorOnboarding = ({ onBack }: VendorOnboardingProps) => {
 
             {/* Main Content */}
             <div className="lg:col-span-3">
-              <Card>
+              <Card className="bg-white shadow-sm">
                 <CardHeader>
                   <CardTitle className="text-2xl">{currentStepData.title}</CardTitle>
                   <CardDescription className="text-lg">{currentStepData.description}</CardDescription>
